@@ -1,0 +1,14 @@
+@import 'tailwindcss';
+body {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+span {
+    background: linear-gradient(90deg, #00d4ff, #4f8cff, #b26dff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+}
