@@ -2,7 +2,7 @@ import HeroImg from "../../assets/hero/hero.png";
 
 export default function Hero() {
   return (
-    <div className="relative w-170 h-112.5 md:block hidden">
+    <div className="relative w-170 h-112.5 lg:block hidden">
 
       {/* Image découpée */}
       <svg

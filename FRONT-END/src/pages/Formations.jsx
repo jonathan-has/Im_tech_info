@@ -165,7 +165,7 @@ export const Formations = () => {
             etu={etu}
           />
         </div>
-           <div className='mt-4 flex flex-col lg:flex-row mb-2'>
+      <div className='mt-4 flex flex-col lg:flex-row mb-2 justify-center items-center'>
         <Card_home
           formation_name="Formation de qualité"
           description="Des conteneurs conçu par des experts pour vous donner les

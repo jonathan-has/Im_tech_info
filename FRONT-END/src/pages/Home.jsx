@@ -16,7 +16,7 @@ export const Home = () => {
   return (
   <div>
     <section className='h-140 bg-blue-950 w-screen pt-25'>
-      <div className='flex items-center ml-1'>
+      <div className='flex ml-1 flex-row'>
         <div>
           <button className='ml-5 mb-1 text-[0.85rem] bg-[#122ac7b1] p-1 text-white rounded-2xl w-50 duration-300 animate-pulse'>PLATEFORME DE FORMATIONS</button>
           <div>
@@ -25,57 +25,68 @@ export const Home = () => {
             <p className='m-5 text-gray-400'>IM TECH INFO est une plateforme complète pour gérer vos formations
               <br />et accéder à des supports pédagogiques de qualité.</p>
           </div>
-          <div className='m-4 flex items-center gap-6'>
+          <div className='m-4 flex md:flex-row flex-row items-center gap-6'>
             <button className='flex items-center gap-2 bg-[#122ac7b1] p-3 w-60 text-center text-white rounded-md font-bold cursor-pointer hover:-translate-y-1 active:scale-95'><FaCircleDot size={20} className='text-white cursor-pointer'/>Découvrir les formations</button>
             <button className='flex items-center gap-2 bg-white p-3 rounded-md  cursor-pointer font-bold hover:text-blue-800 hover:-translate-y-1 active:scale-95'><FaCirclePlay size={20} className='text-blue-600 cursor-pointer'/>Voir la vidéo</button>
           </div>
-          <div className='flex flex-col md:flex-row gap-1'>
-            <div className='flex items-center gap-2 m-3'>
-              <div>
-                <FaBook size={25} className='text-blue-500 cursor-pointer'/>
-              </div>
-              <div className='flex flex-col'>
-                <div className='font-bold text-white ml-1'>+50</div>
-                <div className='font-bold text-white'>Formations</div>
-              </div>
-            </div>
-
-            <div className='flex items-center gap-2 m-3'>
-              <div>
-                <FaFile size={25} className='text-blue-500 cursor-pointer'/>
-              </div>
-              <div className='flex flex-col'>
-                <div className='font-bold text-white ml-1'>+200</div>
-                <div className='font-bold text-white'>Supports disponibles</div>
+          <div classname='flex'>
+            <div classname='md:block hidden'>
+              <div className='flex flex-col md:flex-row gap-1'>
+                <div className='flex items-center gap-2 m-3'>
+                    <div>
+                      <FaBook size={25} className='text-blue-500 cursor-pointer md:block hidden'/>
+                    </div>
+                    <div className='flex flex-col '>
+                      <div className='font-bold text-white ml-1 md:block hidden'>+50</div>
+                      <div className='font-bold text-white md:block hidden'>Formations</div>
+                    </div>
               </div>
             </div>
 
-          <div className='flex items-center gap-2 m-3'>
-            <div>
-              <FaUserGraduate size={25} className='cursor-pointer text-amber-400'/>
             </div>
-            <div className='flex flex-col'>
-              <div className='font-bold text-white ml-1'>+1000</div>
-              <div className='font-bold text-white'>Apprenants</div>
+            <div classname='md:block hidden'>
+              <div className='flex items-center gap-2 m-3'>
+                <div>
+                  <FaFile size={25} className='text-blue-500 cursor-pointer md:block hidden'/>
+                </div>
+                <div className='flex flex-col '>
+                  <div className='font-bold text-white ml-1'>+200</div>
+                  <div className='font-bold text-white'>Supports disponibles</div>
+                </div>
+              
+              </div>
+            </div>
+
+          <div classname='md:block hidden'>
+            <div className='flex items-center gap-2 m-3'>
+              <div>
+                <FaUserGraduate size={25} className='cursor-pointer text-amber-400 md:block hidden'/>
+              </div>
+              <div className='flex flex-col '>
+                <div className='font-bold text-white ml-1'>+1000</div>
+                <div className='font-bold text-white'>Apprenants</div>
+              </div> 
             </div>
           </div>
 
-          <div className='flex items-center gap-2 m-3'>
-            <div>
-              <FaClock size={25} className='text-blue-500 cursor-pointer'/>
-            </div>
-            <div className='flex flex-col'>
-              <div className='font-bold text-white ml-1s'>24/7</div>
-              <div className='font-bold text-white'>Accès illimités</div>
+          <div classname='md:block hidden'>
+            <div className='flex items-center gap-2 m-3'>
+              <div>
+                <FaClock size={25} className='text-blue-500 cursor-pointer md:block hidden'/>
+              </div>
+              <div className='flex flex-col'>
+                <div className='font-bold text-white ml-1s'>24/7</div>
+                <div className='font-bold text-white'>Accès illimités</div>
+              </div>
             </div>
           </div>
-        </div>
+      </div>
         </div>
       <HeroImage/>
       </div>
     </section>
     <section>
-      <div className='mt-4 flex flex-col lg:flex-row mb-2'>
+      <div className='mt-4 flex flex-col lg:flex-row mb-2 justify-center items-center'>
         <Card_home
           formation_name="Formation de qualité"
           description="Des conteneurs conçu par des experts pour vous donner les
@@ -112,7 +123,7 @@ export const Home = () => {
         <div className='text-3xl font-extrabold text-center m-2'>Nos catégories de formations</div>
         <p className='text-center text-gray-600'>Explorer nos domaines de formation et développez vos compétences</p>
       </div>
-      <div className='mt-4 flex flex-col lg:flex-row mb-2'>
+      <div className='mt-4 flex flex-col lg:flex-row mb-2 justify-center items-center'>
         <Card
           style_card="w-30 h-17 bg-blue-800 m-3 rounded-lg flex items-center justify-center"
           icone={<FaCode size={25} className='text-white cursor-pointer'/>}
@@ -138,7 +149,7 @@ export const Home = () => {
           style_card="w-30 h-17 bg-pink-800 m-3 rounded-lg flex items-center justify-center"
           icone={<FaCode size={25} className='text-white cursor-pointer'/>}
           formation="Développement Web"
-          description="HTML, CSS, JavaScript, React et plus encore"
+          description="HTML, CSS, JavaScript, React et plus encore"                                                                                                                                                                                                           
           fleche={<FaArrowRight size={12} className='text-blue-800 cursor-pointer'/>}
         />
       </div>

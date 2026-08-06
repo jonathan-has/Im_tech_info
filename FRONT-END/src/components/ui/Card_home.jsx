@@ -1,6 +1,6 @@
 function Card_home({formation_name,description,style_bg,photo}) {
     return(
-        <div className="flex items-center bg-gray-300 w-75 h-30 m-3 rounded-2xl shadow-md shadow-gray-500">
+        <div className="flex items-center bg-gray-300 w-75 h-30 m-3  rounded-2xl shadow-md shadow-gray-500">
             <div className={style_bg}>
                 {photo}
             </div>

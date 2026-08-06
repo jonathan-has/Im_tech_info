@@ -1,9 +1,10 @@
 import React from 'react'
 import Logo from '../../assets/images/logo/logo.png'
 import { FaFacebook,FaInstagram,FaTwitter,FaTiktok } from 'react-icons/fa6'
+import { Link } from 'react-router'
 export const Footer = () => {
   return (
-    <div className='xl:block hidden h-75 w-screen bg-blue-950 '>
+    <footer className='xl:block hidden h-75 w-screen bg-blue-950 '>
       <div className='flex items-center m-4'>
         <div className='flex items-center flex-col'>
             <img src={Logo} alt="" className='w-75 h-55 cursor-pointer active:scale-95'/>
@@ -19,36 +20,36 @@ export const Footer = () => {
           <div>
             <h1  className='text-white font-bold m-3'>Liens rapides</h1>
             <div className='m-2 '>
-              <div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Accueil</div>
-              <div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Formations</div>
-              <div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Supports</div>
-              <div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>A propos</div>
-              <div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Contact</div>
+              <Link to="/"><div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Accueil</div></Link>
+              <Link to="/Formations"><div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Formations</div></Link>
+              <Link to="/Supports"><div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Supports</div></Link>
+              <Link to="/Propos"><div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>A propos</div></Link>
+              <Link to="/Contact"><div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Contact</div></Link>
             </div>
           </div>
           <div>
             <h1  className='text-white font-bold m-3'>Ressources</h1>
             <div className='m-2 '>
-              <div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>FAQ</div>
-              <div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Guide d'utilisation</div>
-              <div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Conditions d'utilisation</div>
-              <div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Politique de confidualité</div>
+              <Link to=""><div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>FAQ</div></Link>
+              <Link to=""><div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Guide d'utilisation</div></Link>
+              <Link to=""><div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Conditions d'utilisation</div></Link>
+              <Link to=""><div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Politique de confidualité</div></Link>
             </div>
           </div>
           <div>
             <h1  className='text-white font-bold m-3'>Formations</h1>
             <div className='m-2 '>
-              <div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Dévelopement Web</div>
-              <div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>CyberSécurité</div>
-              <div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Anglais-Français-Espagnol</div>
+              <Link to="/Formations"><div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Dévelopement Web</div></Link>
+              <Link to="/Formations"><div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>CyberSécurité</div></Link>
+              <Link to="/Formations"><div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Anglais-Français-Espagnol</div></Link>
             </div>
           </div>
           <div>
             <h1 className='text-white font-bold m-3'> Contact</h1>
             <div className='m-2'>
-              <div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Email: imtechinfo@gmail.com</div>
-              <div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Téléphone: +261 33 12 345 83</div>
-              <div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Adresse: Antananarivo, Madagascar</div>
+              <Link to=""><div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Email: imtechinfo@gmail.com</div></Link>
+              <Link to=""><div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Téléphone: +261 33 12 345 83</div></Link>
+              <Link to=""><div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Adresse: Antananarivo, Madagascar</div></Link>
             </div>
           </div>
         </div>
@@ -56,6 +57,6 @@ export const Footer = () => {
       <div className='bg-blue-950 text-[0.7rem] w-screen h-10 text-center text-white'>
         <h1 className='text-center'>©️ 2024 IM TECH INFO. Tout droits réservés.</h1>
       </div>
-    </div>
+    </footer>
   )
 }
