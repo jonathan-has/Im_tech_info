@@ -17,9 +17,8 @@ import { Login } from "../pages/Login";
 
 // Dashlayout
 import { Superadmin } from "../pages/dashboard/SuperAdmin/Superadmin";
-import { Admin } from "../pages/dashboard/Admin";
-import { Teacher } from "../pages/dashboard/Teacher";
-import { Etudiants } from "../pages/dashboard/Etudiants";
+import { Teacher } from "../pages/dashboard/Enseignants/Teacher";
+import { Etudiants } from "../pages/dashboard/Etudiants/Etudiants";
 
 // SuperAdmin sous-pages
 import { Dashsuperadmin } from "../pages/dashboard/SuperAdmin/Dashsuperadmin";
@@ -27,7 +26,18 @@ import { Enseignants } from "../pages/dashboard/SuperAdmin/Enseignants";
 import { Etudiants_sa } from "../pages/dashboard/SuperAdmin/Etudiants_sa";
 import { Formations_sa } from "../pages/dashboard/SuperAdmin/Formations_sa";
 import { Supports_sa } from "../pages/dashboard/SuperAdmin/Supports_sa";
+import { User } from "../pages/dashboard/SuperAdmin/User";
 
+
+// Enseignants sous-pages
+import {Dashteach} from '../pages/dashboard/Enseignants/Dashteach';
+import {Formations_t} from '../pages/dashboard/Enseignants/Formation_t';
+import { Supports_t } from "../pages/dashboard/Enseignants/Supports_t";
+
+// Etudiants sous-pages
+import { Dashetu } from "../pages/dashboard/Etudiants/Dashetu";
+import { Formations_etu } from "../pages/dashboard/Etudiants/Formations_etu";
+import { Supports_etu } from "../pages/dashboard/Etudiants/Supports_etu";
 export const router = createBrowserRouter([
   // 1. Pages Publiques
   {
@@ -101,19 +111,49 @@ export const router = createBrowserRouter([
             path: "supports",
             element: <Supports_sa />,
           },
+          {
+            path: "Utilisateurs",
+            element: <User/>,
+          }
         ],
-      },
-      {
-        path: "admin",
-        element: <Admin />,
       },
       {
         path: "teacher",
         element: <Teacher />,
+        children:
+        [
+          {
+            path:"dashteach",
+            element:<Dashteach/>,
+          },
+          {
+            path:"formations",
+            element:<Formations_t/>,
+          },
+          {
+            path:"supports",
+            element:<Supports_t/>,
+          },
+        ]
       },
       {
         path: "etudiants",
         element: <Etudiants />,
+        children: 
+        [
+          {
+            path: "dashetu",
+            element: <Dashetu/>,
+          },
+          {
+            path: "formations",
+            element: <Formations_etu/>,
+          },
+          {
+            path: "supports",
+            element: <Supports_etu/>,
+          },
+        ]
       },
     ],
   },

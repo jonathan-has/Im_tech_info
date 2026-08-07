@@ -119,14 +119,14 @@ export const Header = () => {
       <div className="hidden lg:flex gap-2">
 
         <Link to="/Login">
-          <button className="border text-white p-2 rounded">
+          <button className="cursor-pointer duration-200 active:scale-95 border text-white p-2 rounded">
             Se connecter
           </button>
         </Link>
 
 
         <Link to="/Register">
-          <button className="bg-blue-600 text-white p-2 rounded">
+          <button className="cursor-pointer duration-200 active:scale-95 bg-blue-600 text-white p-2 rounded">
             S'inscrire
           </button>
         </Link>

@@ -3,21 +3,49 @@ import { Card_propos } from '../../../components/ui_dashboard/Card_propos'
 import { FaBook,FaUser,FaEnvelope,FaFile } from 'react-icons/fa6'
 import { FaBell } from 'react-icons/fa6';
 import FormationGraph from '../../../components/ui_dashboard/FormationGraph';
+import { useState,useEffect } from 'react';
+import { dashsuperadmin } from '../../../services/Dashboard/superadmin/superadminconfig';
 export const Dashsuperadmin = () => {
-    // nombres des cards actifs
-    let nombre_formation= 2;
-    let nombre_user= 1;
-    let nombre_support =2;
-    let nombre_ens = 3;
+  // objet d'état regroupant toutes les données du dashboard
+    const [stats, setStats] = useState({
+        nombre_formation: 0,
+        update_formation: 0,
+        nombre_user: 0,
+        update_user: 0,
+        nombre_support: 0,
+        update_support: 0,
+        nombre_ens: 0,
+        update_ens: 0,
+        notifications: 0
+    });
 
-    // nombres des cards mis à jours
-    let update_formation = 2;
-    let update_user = 1;
-    let update_support = 2;
-    let update_ens = 3;
+    const [chargement, setChargement] = useState(true);
+    const [error, setError] = useState(null);
 
-    let notifications = 2;
+    useEffect(() => {
+        const chargDash = async () => {
+            try {
+                setChargement(true);
+                const data = await dashsuperadmin();
+                setStats(data);
+            } catch (err) {
+                console.error("Erreur de chargement :", err);
+                setError("Impossible de charger les données du tableau de bord");
+            } finally {
+                setChargement(false);
+            }
+        };
 
+        chargDash();
+    }, []);
+
+    if (chargement) {
+        return <div className="opacity-100 translate-x-0 transition-all w-140 text-center duration-3000 flex p-2 gap-3 items-center text-black justify-center font-bold rounded-2xl h-10 m-4 bg-gray-300 shadow-md shadow-gray-400">Chargement du tableau de bord...</div>;
+    }
+
+    if (error) {
+        return <div className="opacity-100 translate-x-0 transition-all w-140 text-center duration-3000 flex p-2 gap-3 items-center text-red-700 justify-center font-bold rounded-2xl h-10 m-4 bg-gray-300 shadow-md shadow-gray-400">{error}</div>;
+    }
   return (
      <main className='m-7 col-span-6'>
         <div className='flex justify-between w-full'>
@@ -27,7 +55,7 @@ export const Dashsuperadmin = () => {
             <div className='font-bold text-md'>SuperAdmin</div> 
             <div className='relative flex'>
               <FaBell size={25}/>
-              <div className='-m-1 w-4 h-4 p-1 text-[8px] flex justify-center items-center text-white rounded-2xl text-center bg-red-400'>{notifications}</div>
+              <div className='-m-1 w-4 h-4 p-1 text-[8px] flex justify-center items-center text-white rounded-2xl text-center bg-red-400'>{stats.notifications}</div>
             </div>
           </div>
         </div>
@@ -35,26 +63,26 @@ export const Dashsuperadmin = () => {
             <Card_propos
                 logo = {<FaBook size={20} className='text-blue-500'/>}
                 tittle = "Formations"
-                nombres = {nombre_formation}
-                update = {update_formation}
+                nombres = {stats.nombre_formation}
+                update = {stats.update_formation}
             />
             <Card_propos
                 logo = {<FaUser size={20} className='text-green-500'/>}
                 tittle = "Utilisateurs"
-                nombres = {nombre_user}
-                update = {update_user}
+                nombres = {stats.nombre_user}
+                update = {stats.update_user}
             />
             <Card_propos
                 logo={<FaEnvelope size={20} className='text-amber-500'/>}
                 tittle="Supports"
-                nombres={nombre_support}
-                update={update_support}
+                nombres={stats.nombre_support}
+                update={stats.update_support}
             />
             <Card_propos
                 logo={<FaFile size={20} className='text-purple-500'/>}
                 tittle="Enseignants"
-                nombres={nombre_ens}
-                update={update_ens}
+                nombres={stats.nombre_ens}
+                update={stats.update_ens}
             />
         </div>
         <div className="mt-6">

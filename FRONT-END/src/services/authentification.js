@@ -4,14 +4,24 @@ export const login = async (email, password) =>{
         const reponse = await fetch(`${API_URL}/login`,{
             method:'POST',
             headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({nom,email,password}) //transformer les donnees js en json
+            body:JSON.stringify({email,password}) //transformer les donnees js en json
 
         });
         const data = await reponse.json(); //retransforme les donnees en objet js comme parse
         // !reponse.ok signifie : "Si le serveur nous renvoie un code d'erreur (HTTP 4xx ou 5xx)". =)false
+        if (reponse.ok) {
+            // Sauvegarde des identifiants dans la mémoire du navigateur
+            if (data.token) {
+                localStorage.setItem('token', data.token); //recuperation
+            }
+            if (data.user) {
+                localStorage.setItem('user', JSON.stringify(data.user));
+            }
+        }
         return {
             success:reponse.ok, //si true : 200 //false 400, 404,500
             message:data.message, //recuperation du message depuis le back
+            data:data
         }
 
     }catch(err){
@@ -20,7 +30,6 @@ export const login = async (email, password) =>{
             success:false,
             message:'Impossible de se connecter au serveur.'
         }
-        
     }
 }
 
