@@ -23,7 +23,6 @@ import { Etudiants } from "../pages/dashboard/Etudiants/Etudiants";
 // SuperAdmin sous-pages
 import { Dashsuperadmin } from "../pages/dashboard/SuperAdmin/Dashsuperadmin";
 import { Enseignants } from "../pages/dashboard/SuperAdmin/Enseignants";
-import { Etudiants_sa } from "../pages/dashboard/SuperAdmin/Etudiants_sa";
 import { Formations_sa } from "../pages/dashboard/SuperAdmin/Formations_sa";
 import { Supports_sa } from "../pages/dashboard/SuperAdmin/Supports_sa";
 import { User } from "../pages/dashboard/SuperAdmin/User";
@@ -38,6 +37,10 @@ import { Supports_t } from "../pages/dashboard/Enseignants/Supports_t";
 import { Dashetu } from "../pages/dashboard/Etudiants/Dashetu";
 import { Formations_etu } from "../pages/dashboard/Etudiants/Formations_etu";
 import { Supports_etu } from "../pages/dashboard/Etudiants/Supports_etu";
+
+// Pour la protection des routes
+import { ProtectedRoute } from "../security/ProtectedRoutes";
+
 export const router = createBrowserRouter([
   // 1. Pages Publiques
   {
@@ -88,70 +91,81 @@ export const router = createBrowserRouter([
     element: <Dashlayout />,
     children: [
       {
-        path: "superadmin",
-        element: <Superadmin />,
-        children: [
+        element: <ProtectedRoute role='superadmin'/>,
+        children:[
           {
-            path: "dashsuperadmin",
-            element: <Dashsuperadmin />,
+            path: "superadmin",
+            element: <Superadmin />,
+            children: [
+              {
+                path: "dashsuperadmin",
+                element: <Dashsuperadmin />,
+              },
+              {
+                path: "formations",
+                element: <Formations_sa />,
+              },
+              {
+                path: "enseignants",
+                element: <Enseignants />,
+              },
+              {
+                path: "supports",
+                element: <Supports_sa />,
+              },
+              {
+                path: "Utilisateurs",
+                element: <User/>,
+              }
+            ]
           },
-          {
-            path: "formations",
-            element: <Formations_sa />,
-          },
-          {
-            path: "enseignants",
-            element: <Enseignants />,
-          },
-          {
-            path: "etudiants",
-            element: <Etudiants_sa />,
-          },
-          {
-            path: "supports",
-            element: <Supports_sa />,
-          },
-          {
-            path: "Utilisateurs",
-            element: <User/>,
-          }
-        ],
+          ],
       },
       {
-        path: "teacher",
-        element: <Teacher />,
-        children:
-        [
+        element: <ProtectedRoute role='enseignants'/>,
+        children: [
           {
-            path:"dashteach",
-            element:<Dashteach/>,
-          },
-          {
-            path:"formations",
-            element:<Formations_t/>,
-          },
-          {
-            path:"supports",
-            element:<Supports_t/>,
+            path: "teacher",
+            element: <Teacher />,
+            children:
+            [
+              {
+                path:"dashteach",
+                element:<Dashteach/>,
+              },
+              {
+                path:"formations",
+                element:<Formations_t/>,
+              },
+              {
+                path:"supports",
+                element:<Supports_t/>,
+              },
+            ]
           },
         ]
       },
       {
-        path: "etudiants",
-        element: <Etudiants />,
-        children: 
-        [
+        element: <ProtectedRoute role='etudiants'/>,
+        children: [
           {
-            path: "dashetu",
-            element: <Dashetu/>,
-          },
-          {
-            path: "formations",
-            element: <Formations_etu/>,
-          },
-          {
-            path: "supports",
-            element: <Supports_etu/>,
+            path: "etudiants",
+            element: <Etudiants />,
+            children: 
+            [
+              {
+                path: "dashetu",
+                element: <Dashetu/>,
+              },
+              {
+                path: "formations",
+                element: <Formations_etu/>,
+              },
+              {
+                path: "supports",
+                element: <Supports_etu/>,
+              },
+            ]
           },
         ]
       },

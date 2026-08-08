@@ -11,17 +11,17 @@
 //             body: JSON.stringify({ formation, categorie, date })
 //         });
 //         const data = await reponse.json();
-//         return {
-//             success: data.success,
-//             message: data.message,
-//             data: data
-//         };
-//     } catch (err) {
-        // return {
-        //     success: false,
-        //     message: 'Impossible de se connecter au serveur.'
-        // };
-//     }
+    //     return {
+    //         success: data.success,
+    //         message: data.message,
+    //         data: data
+    //     };
+    // } catch (err) {
+    //     return {
+    //         success: false,
+    //         message: 'Impossible de se connecter au serveur.'
+    //     };
+    // }
 // };
 
 // export const getFormations = async (token) => {
