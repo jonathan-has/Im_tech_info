@@ -21,7 +21,7 @@ export const Contact = () => {
                 <p className='m-5 text-gray-400'>Notre mission est d'accompagner les apprenants, enseignants <br />et institutions à travers des formations de qualité et des outils<br />pédagogiques performants.</p>
               </div>
               <div className='m-4 flex items-center gap-6'>
-                <button className='m-3 flex items-center gap-2 bg-[#122ac7b1] p-3 w-60 text-center text-white rounded-md font-bold cursor-pointer hover:-translate-y-1 active:scale-95'><FaBullseye size={20} className='text-white cursor-pointer'/>Notre mission</button>
+                <a href="#contact"><button className='m-3 flex items-center gap-2 bg-[#122ac7b1] p-3 w-60 text-center text-white rounded-md font-bold cursor-pointer hover:-translate-y-1 active:scale-95'><FaBullseye size={20} className='text-white cursor-pointer'/>Nous contacter</button></a>
               </div>
             </div>
             <div className='md:block hidden'>
@@ -69,7 +69,7 @@ export const Contact = () => {
             </div>    
             </div>
         </section>
-        <section className='m-4'>
+        <section className='m-4' id='contact'>
           <div className='flex items-center lg:flex-row flex-col'>
             <div>
               <h1 className='m-2 font-bold text-xl text-center'>Envoyez-nous un message</h1>

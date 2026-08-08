@@ -110,8 +110,6 @@ export const Header = () => {
           onClick={afficher}
         />
 
-        <FaMoon className="text-white"/>
-
       </div>
 
 

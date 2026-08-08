@@ -26,7 +26,7 @@ export const Propos = () => {
               <p className='m-5 text-gray-400'>Notre mission est d'accompagner les apprenants, enseignants <br />et institutions à travers des formations de qualité et des outils<br />pédagogiques performants.</p>
             </div>
             <div className='m-4 flex items-center gap-6'>
-              <button className='m-3 flex items-center gap-2 bg-[#122ac7b1] p-3 w-60 text-center text-white rounded-md font-bold cursor-pointer hover:-translate-y-1 active:scale-95'><FaBullseye size={20} className='text-white cursor-pointer'/>Notre mission</button>
+              <a href="#propos"><button className='m-3 flex items-center gap-2 bg-[#122ac7b1] p-3 w-60 text-center text-white rounded-md font-bold cursor-pointer hover:-translate-y-1 active:scale-95'><FaBullseye size={20} className='text-white cursor-pointer'/>Notre mission</button></a>
             </div>
           </div>
           <div className='md:block hidden'>
@@ -74,7 +74,7 @@ export const Propos = () => {
           </div>    
           </div>
       </section>
-      <section className='flex gap-2 flex-col'>
+      <section className='flex gap-2 flex-col' id='propos'>
         <h1 className='m-2 font-bold text-2xl text-center'>Qui sommes-nous ?</h1>
         <div className='flex gap-5 lg:flex-row flex-col m-4 items-center'>
           <div className='w-[50%] shadow-md shadow-gray-400 p-4 rounded-md'>

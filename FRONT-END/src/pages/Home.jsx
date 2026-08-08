@@ -26,11 +26,11 @@ export const Home = () => {
               <br />et accéder à des supports pédagogiques de qualité.</p>
           </div>
           <div className='m-4 flex md:flex-row flex-row items-center gap-6'>
-            <button className='flex items-center gap-2 bg-[#122ac7b1] p-3 w-60 text-center text-white rounded-md font-bold cursor-pointer hover:-translate-y-1 active:scale-95'><FaCircleDot size={20} className='text-white cursor-pointer'/>Découvrir les formations</button>
-            <button className='flex items-center gap-2 bg-white p-3 rounded-md  cursor-pointer font-bold hover:text-blue-800 hover:-translate-y-1 active:scale-95'><FaCirclePlay size={20} className='text-blue-600 cursor-pointer'/>Voir la vidéo</button>
+            <Link to='/Formations'><button className='flex items-center gap-2 bg-[#122ac7b1] p-3 w-60 text-center text-white rounded-md font-bold cursor-pointer hover:-translate-y-1 active:scale-95'><FaCircleDot size={20} className='text-white cursor-pointer'/>Découvrir les formations</button></Link>
+            <Link to='/Dashbord/etudiants/dashetu'><button className='flex items-center gap-2 bg-white p-3 rounded-md  cursor-pointer font-bold hover:text-blue-800 hover:-translate-y-1 active:scale-95'><FaCirclePlay size={20} className='text-blue-600 cursor-pointer'/>Voir les supports</button></Link>
           </div>
-          <div classname='flex'>
-            <div classname='md:block hidden'>
+          <div className='flex'>
+            <div classNme='md:block hidden'>
               <div className='flex flex-col md:flex-row gap-1'>
                 <div className='flex items-center gap-2 m-3'>
                     <div>

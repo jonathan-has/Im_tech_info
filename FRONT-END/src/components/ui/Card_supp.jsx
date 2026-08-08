@@ -10,7 +10,6 @@ function Card_supp ({style_logo,logo,title,description}){
                 <h1 className="font-bold text-md m-2">{title}</h1>
                 <p className="m-2 text-[0.8rem] text-center text-gray-800">{description}</p>
             </div>
-            <FaArrowRight size={20} className="m-1 text-blue-700 font-bold duration-200 active:scale-90 cursor-pointer"/>
         </div>
     )
 }

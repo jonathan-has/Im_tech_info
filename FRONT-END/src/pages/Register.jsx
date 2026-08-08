@@ -5,6 +5,7 @@ import { Link } from 'react-router';
 import { FaCheck,FaX } from 'react-icons/fa6';
 import { useState } from 'react';
 import {Registre} from '../services/authentification'; 
+import { useNavigate } from 'react-router';
 export const Register = () => {
     // pour pouvoir enregistrer le formulaire
         const [nom,setNom] = useState("");
@@ -15,6 +16,9 @@ export const Register = () => {
         const [visible,setVisible] = useState(false); //si c'est false le pop-up ne s'affiche pas
         const[message,setMessage] = useState(""); //message a envoye si erreur 
         const [success,setSuccess] = useState(true);
+
+    // pour la navigation
+        const navigate = useNavigate();
 
      // apparition et suppression du bouton
         const [chargement,setChargement] = useState(false);
@@ -53,14 +57,8 @@ export const Register = () => {
         }
         const inscrire = async(e) => {
             e.preventDefault();
-            setChargement(true);
-            const resultat = await Registre(nom,email,password); //la fonction qui se trouve dans '../services/authentification';
-    
-            // apparition du pop-up
-            notification(resultat.message,resultat.success); //depuis le back
-            setChargement(false);
             // Validation préalable
-            if (!nom || !email || !password) {
+            if (!nom || !email || !password ||!second_pass) {
                 notification("Veuillez remplir tous les champs", false);
                 return; // pour stopper la fonction
             }
@@ -68,6 +66,14 @@ export const Register = () => {
                 notification("Les mots de passe ne correspondent pas", false);
                 return;
             }
+            setChargement(true);
+            const resultat = await Registre(nom,email,password); //la fonction qui se trouve dans '../services/authentification';
+            if (resultat.success) { 
+                navigate("/Dashboard/Etudiants/Dashetu")
+            }
+            // apparition du pop-up
+            notification(resultat.message,resultat.success); //depuis le back
+            setChargement(false);
         }
   return (
     <div>

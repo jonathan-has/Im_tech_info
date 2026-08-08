@@ -25,7 +25,7 @@ export const Formations = () => {
                 <br />et booster votre carrière</p>
             </div>
             <div className='m-4 flex items-center gap-6'>
-              <button className='m-3 flex items-center gap-2 bg-[#122ac7b1] p-3 w-60 text-center text-white rounded-md font-bold cursor-pointer hover:-translate-y-1 active:scale-95'><FaCircleDot size={20} className='text-white cursor-pointer'/>Explorer les formations</button>
+              <a href="#formation"><button className='m-3 flex items-center gap-2 bg-[#122ac7b1] p-3 w-60 text-center text-white rounded-md font-bold cursor-pointer hover:-translate-y-1 active:scale-95'><FaCircleDot size={20} className='text-white cursor-pointer'/>Explorer les formations</button></a>
             </div>
           </div>
           <div className='md:block hidden'>
@@ -73,13 +73,13 @@ export const Formations = () => {
           </div>    
           </div>
       </section>
-      <section>
-        <div className='flex lg:flex-row md:flex-col  justify-center flex-col items-center gap-x-8 gap-y-4'>
+      <section id='formation'>
+        {/* <div className='flex lg:flex-row md:flex-col  justify-center flex-col items-center gap-x-8 gap-y-4'>
           <div className='flex items-center shadow-md shadow-black xl:w-110 w-[95%]  rounded-md p-1 m-2'>
             <FaSearch size={20} className=''></FaSearch>
             <input type="text" placeholder='Rechercher une formation...' className='outline-none w-full p-1 m-2 rounded-md'/>
-          </div>
-          <div className='w-auto flex items-center shadow-md shadow-black p-2 rounded-md'>
+          </div> */}
+          {/* <div className='w-auto flex items-center shadow-md shadow-black p-2 rounded-md'>
             <p className='m-1'>Niveau</p>
             <FaChevronDown size={20} className='ml-14 text-end cursor-pointer'/>
           </div>
@@ -99,7 +99,8 @@ export const Formations = () => {
           <div className='w-auto m-2 p-2.5 font-bold text-[0.9rem] shadow-md shadow-black rounded-xl'>Base de donées</div>
           <div className='w-auto m-2 p-2.5 font-bold text-[0.9rem] shadow-md shadow-black rounded-xl'>Réseaux</div>
           <div className='m-2'><FaChevronRight size={20} className='m-2 text-end cursor-pointer'/></div>
-        </div>
+        </div> */}
+        <h1 className=' text-2xl  text-center font-bold m-3'>Nos formations</h1>
         <div className='flex flex-wrap m-2 gap-6 items-center justify-center'>
           <Card_form
             style="w-[65%] h-25 rounded-2xl bg-blue-800 m-5 flex items-center justify-center"

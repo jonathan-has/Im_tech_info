@@ -4,20 +4,21 @@ import { FaFacebook,FaInstagram,FaTwitter,FaTiktok } from 'react-icons/fa6';
 import { FaCheck,FaX } from 'react-icons/fa6';
 import { Link } from 'react-router';
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
 import {login} from '../services/authentification';
 export const Login = () => {
-     // pour pouvoir enregistrer le formulaire
-        const [email,setEmail] = useState("");
-        const [password,setPassword] = useState("");
+    // Pour la navigation
+    const navigate = useNavigate()
+    // pour pouvoir enregistrer le formulaire
+    const [email,setEmail] = useState("");
+    const [password,setPassword] = useState("");
     // pour savoir si l'email est ajoute avec succes ou erreur == verification visuelle
-        const [visible,setVisible] = useState(false); //si c'est false le pop-up ne s'affiche pas
-        const[message,setMessage] = useState(""); //message a envoye si erreur 
-        const [success,setSuccess] = useState(true);
-
-        // apparition et suppression du bouton
-        const [chargement,setChargement] = useState(false);
-        // mise en place du pop-up de succès et echec
-
+    const [visible,setVisible] = useState(false); //si c'est false le pop-up ne s'affiche pas
+    const[message,setMessage] = useState(""); //message a envoye si erreur 
+    const [success,setSuccess] = useState(true);
+    // apparition et suppression du bouton
+    const [chargement,setChargement] = useState(false);
+    // mise en place du pop-up de succès et echec
         // mot de passe afficher/masquer
         const [voir_password,setVoir_password] = useState(false);
         let inputType;
@@ -66,7 +67,20 @@ export const Login = () => {
             }
             setChargement(true);
             const resultat = await login(email,password); //la fonction qui se trouve dans '../services/authentification';
-    
+            
+            // Pour la redirection des users
+            if (resultat.success) {
+                const role = resultat.data?.user?.role;
+                // le ? evite le crash s'il y a une erreur
+                if (role === "superadmin") {
+                    navigate('/Dashboard/Superadmin/Dashsuperadmin');
+                }
+                else if (role === "enseignants"){
+                    navigate('/Dashboard/Teacher/Dashteach');
+                } else if (role === "etudiants") {
+                    navigate('/Dashboard/Etudiants/Dashetu');
+                }
+            }
             // apparition du pop-up
             notification(resultat.message,resultat.success); //depuis le back
             setChargement(false);

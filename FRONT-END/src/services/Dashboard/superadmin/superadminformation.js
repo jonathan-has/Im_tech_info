@@ -17,10 +17,10 @@
 //             data: data
 //         };
 //     } catch (err) {
-//         return {
-//             success: false,
-//             message: 'Impossible de se connecter au serveur.'
-//         };
+        // return {
+        //     success: false,
+        //     message: 'Impossible de se connecter au serveur.'
+        // };
 //     }
 // };
 
