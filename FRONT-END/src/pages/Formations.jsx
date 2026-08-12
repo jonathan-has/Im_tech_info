@@ -1,9 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Card_home from "../components/ui/Card_home"; //reutilisable
 import { FaCircleDot, FaCirclePlay } from 'react-icons/fa6';
 import { FaSearch } from 'react-icons/fa';
+import { getFormations } from '../services/formations';
+import { useEffect } from 'react';
 import { FaBook,FaFile,FaUserGraduate,FaClock,FaShieldVirus} from 'react-icons/fa';
-import { FaDesktop,FaArrowRight,FaCode,FaPlusCircle,FaInfoCircle} from 'react-icons/fa';
+import { FaDesktop,FaArrowRight,FaCode,FaPlusCircle,FaInfoCircle,FaHeadphones} from 'react-icons/fa';
 import { FaChevronDown } from 'react-icons/fa6';
 import { Link } from 'react-router';
 import { FaChevronRight,FaBellSlash} from 'react-icons/fa6';
@@ -11,8 +13,70 @@ import { FaDatabase,FaPython,FaSquare} from 'react-icons/fa6';
 import { FaJava,FaBrain } from 'react-icons/fa';
 import Card_form from '../components/ui/Card_form';
 export const Formations = () => {
-  let timer = 10;
-  let etu= 200;
+  //recuperation 
+  const [formations,setFormations] = useState([]);
+  const chargerFormations = async () => {
+    try {
+        const reponse = await getFormations();
+        if (reponse) {
+          setFormations(reponse);
+        }else {
+          setFormations([]);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  // useEffect
+  useEffect(() => {
+    chargerFormations();
+  },[]);
+  // liste contenant les formations
+  let listeFormation = null;
+  if (formations.length === 0) {
+    listeFormation = (
+      <div className='p-4 text-center text-gray-500 border-b'>Aucune formation trouvée.</div>
+    )
+  }
+  else {
+      listeFormation = formations.map((item,index) => {
+        let itemKey = index;
+        if (item.id) {
+            itemKey = item.id;
+        }
+
+        let itemTimer = 'N/A';
+        if (item.timer) {
+            itemTimer = item.timer;
+        } else if (item.duree) {
+            itemTimer = item.duree;
+        }
+
+        let itemDate = 'N/A';
+        if (item.date) {
+            itemDate = item.date;
+        } else if (item.date_creation) {
+            itemDate = item.date_creation;
+        }
+
+        let sousTitreMobile = item.categorie;
+        if (item.timer) {
+          sousTitreMobile = item.categorie + ' • ' + item.timer;
+        }
+        let description = item.description;
+        if (item.description){
+          description = item.description
+        }
+        return (
+          <Card_form
+              title= {item.titre}
+              timer={itemTimer}
+              description={item.description}
+              key={item.key}
+            />
+        )
+      });
+  }
   return (
     <div className='w-screen'>
       <section className='bg-blue-950 w-screen pt-25'>
@@ -74,100 +138,13 @@ export const Formations = () => {
           </div>
       </section>
       <section id='formation'>
-        {/* <div className='flex lg:flex-row md:flex-col  justify-center flex-col items-center gap-x-8 gap-y-4'>
-          <div className='flex items-center shadow-md shadow-black xl:w-110 w-[95%]  rounded-md p-1 m-2'>
-            <FaSearch size={20} className=''></FaSearch>
-            <input type="text" placeholder='Rechercher une formation...' className='outline-none w-full p-1 m-2 rounded-md'/>
-          </div> */}
-          {/* <div className='w-auto flex items-center shadow-md shadow-black p-2 rounded-md'>
-            <p className='m-1'>Niveau</p>
-            <FaChevronDown size={20} className='ml-14 text-end cursor-pointer'/>
-          </div>
-          <div className='w-auto flex items-center shadow-md shadow-black p-2 rounded-md'>
-            <p className='m-1'>Catégories</p>
-            <FaChevronDown size={20} className='ml-14 text-end cursor-pointer'/>
-          </div>
-          <div className='w-auto flex items-center shadow-md shadow-black p-2 rounded-md'>
-            <p className='m-1'>Trier par</p>
-            <FaChevronDown size={20} className='ml-14 text-end cursor-pointer'/>
-          </div>
-        </div>
-        <div className='flex flex-wrap items-center justify-center'>
-          <div className='w-auto m-2 p-2.5 font-bold text-[0.9rem] shadow-md shadow-black rounded-xl'>Tout</div>
-          <div className='w-auto m-2 p-2.5 font-bold text-[0.9rem] shadow-md shadow-black rounded-xl'>Développement Web</div>
-          <div className='w-auto m-2 p-2.5 font-bold text-[0.9rem] shadow-md shadow-black rounded-xl'>Cybersécurité</div>
-          <div className='w-auto m-2 p-2.5 font-bold text-[0.9rem] shadow-md shadow-black rounded-xl'>Base de donées</div>
-          <div className='w-auto m-2 p-2.5 font-bold text-[0.9rem] shadow-md shadow-black rounded-xl'>Réseaux</div>
-          <div className='m-2'><FaChevronRight size={20} className='m-2 text-end cursor-pointer'/></div>
-        </div> */}
-        <h1 className=' text-2xl  text-center font-bold m-3'>Nos formations</h1>
+        <h1 className=' text-2xl  text-center font-bold m-3'>Nos formations disponibles</h1>
         <div className='flex flex-wrap m-2 gap-6 items-center justify-center'>
-          <Card_form
-            style="w-[65%] h-25 rounded-2xl bg-blue-800 m-5 flex items-center justify-center"
-            logo_form={<FaCode size={40} className='text-white cursor-pointer'/>}
-            title= "Développement Web"
-            timer={timer}
-            description="HTML - CSS - React - Nodejs"
-            etu={etu}
-          />
-          <Card_form
-            style="w-[65%] h-25 rounded-2xl bg-green-800 m-5 flex items-center justify-center"
-            logo_form={<FaDatabase size={40} className='text-white cursor-pointer'/>}
-            title="Base de données"
-            timer={timer}
-            description="SQL - MySQL - Modélisation"
-            etu={etu}
-          />           <Card_form
-            style="w-[65%] h-25 rounded-2xl bg-blue-500 m-5 flex items-center justify-center"
-            logo_form={<FaPython size={40} className='text-white cursor-pointer'/>}
-            title="Python pour débutants"
-            timer={timer}
-            description="Python - Algorithmes - Projets"
-            etu={etu}
-          />
-          <Card_form
-            style="w-[65%] h-25 rounded-2xl bg-purple-800 m-5 flex items-center justify-center"
-            logo_form={<FaShieldVirus size={40} className='text-white cursor-pointer'/>}
-            title="Cybersécurité essentielle"
-            timer={timer}
-            description="Sécurité - Réseaux - Pentest"
-            etu={etu}
-          />
-          <Card_form
-            style="w-[65%] h-25 rounded-2xl bg-yellow-500 m-5 flex items-center justify-center"
-            title="UI/UX Design"
-            logo_form={<FaSquare size={40} className='text-white cursor-pointer'/>}
-            timer={timer}
-            description="Figma - WireFarms - Prototyping"
-            etu={etu}
-          />
-          <Card_form
-            style="w-[65%] h-25 rounded-2xl bg-pink-800 m-5 flex items-center justify-center"
-            logo_form={<FaDesktop size={40} className='text-white cursor-pointer'/>}
-            title="Bureutique complète"
-            timer={timer}
-            description="Word - Excel - PowerPoint - Access"
-            etu={etu}
-          />
-          <Card_form
-            style="w-[65%] h-25 rounded-2xl bg-amber-800 m-5 flex items-center justify-center"
-            logo_form={<FaBrain size={40} className='text-white cursor-pointer'/>}
-            title="Réseaux informatiques"
-            timer={timer}
-            description="HTML - CSS - React - Nodejs"
-            etu={etu}
-          />
-          <Card_form
-            style="w-[65%] h-25 rounded-2xl bg-orange-500 m-5 flex items-center justify-center"
-            logo_form={<FaJava size={40} className='text-white cursor-pointer'/>}
-            title="JAVA"
-            timer={timer}
-            description="Algorithme - Async - Projets"
-            etu={etu}
-          />
+          {listeFormation}
+        {/* Les listes des cards */}
         </div>
       <div className='mt-4 flex flex-col lg:flex-row mb-2 justify-center items-center'>
-        <Card_home
+              <Card_home
           formation_name="Formation de qualité"
           description="Des conteneurs conçu par des experts pour vous donner les
           compétences essentielles"
@@ -176,27 +153,24 @@ export const Formations = () => {
         />
         
         <Card_home
-          formation_name="Formation de qualité"
-          description="Des conteneurs conçu par des experts pour vous donner les
-          compétences essentielles"
-          style_bg="w-35 h-13 bg-[#606060] m-3 rounded-lg flex items-center justify-center"
+          formation_name="Apprentissage pratique"
+          description="Des cours conçu avec des projets concrets et des exercices pratiques"
+          style_bg="w-35 h-13 bg-amber-400 m-3 rounded-lg flex items-center justify-center"
           photo= {<FaBook size={25} className='text-white cursor-pointer'/>}
-        />
+          />
 
         <Card_home
-          formation_name="Formation de qualité"
-          description="Des conteneurs conçu par des experts pour vous donner les
-          compétences essentielles"
-          style_bg="w-35 h-13 bg-purple-400 m-3 rounded-lg flex items-center justify-center"
+          formation_name="Certificat reconnu"
+          description="Obtenez un certificat à la fin de chaque formation pour valorises vos compétences."
+          style_bg="w-35 h-13 bg-green-500 m-3 rounded-lg flex items-center justify-center"
           photo= {<FaUserGraduate size={25} className='text-white cursor-pointer'/>}
-        />
+          />
 
         <Card_home
-          formation_name="Formation de qualité"
-          description="Des conteneurs conçu par des experts pour vous donner les
-          compétences essentielles"
-          style_bg="w-35 h-13 bg-amber-500 m-3 rounded-lg flex items-center justify-center"
-          photo= {<FaFile size={25} className='text-white cursor-pointer'/>}
+          formation_name="Assistance continue"
+          description="Des supports disponible pour répondre à toutes vos questions"
+          style_bg="w-35 h-13 bg-purple-500 m-3 rounded-lg flex items-center justify-center"
+          photo= {<FaHeadphones size={25} className='text-white cursor-pointer'/>}
         />
       </div>
       </section>

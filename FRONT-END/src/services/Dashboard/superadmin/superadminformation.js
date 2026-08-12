@@ -1,6 +1,6 @@
 // const URL = 'http://localhost:3000/Dashboard/SuperAdmin/Formations';
 
-// export const postformations = async (formation, categorie, date, token) => {
+// export const postformations = async (formation, categorie,timer,description, date, token) => {
 //     try {
 //         const reponse = await fetch(`${URL}/`, {
 //             method: 'POST',
@@ -34,23 +34,23 @@
 //             }
 //         });
 
-//         if (!reponse.ok) {
-//             throw new Error(`Erreur HTTP: ${reponse.status}`);
-//         }
+    //     if (!reponse.ok) {
+    //         throw new Error(`Erreur HTTP: ${reponse.status}`);
+    //     }
 
-//         const data = await reponse.json();
-//         return data;
-//     } catch (err) {
-//         console.error("Erreur lors de la récupération des formations :", err);
-//         return [];
-//     }
+    //     const data = await reponse.json();
+    //     return data;
+    // } catch (err) {
+    //     console.error("Erreur lors de la récupération des formations :", err);
+    //     return [];
+    // }
 // };
 
 
 /**
  * 1. CRÉER UNE NOUVELLE FORMATION (POST)
  */
-export const postformations = async (formation, categorie, date, token) => {
+export const postformations = async (formation, categorie,timer,description, date, token) => {
     return Promise.resolve({
         success: true,
         message: "Formation créée avec succès",
@@ -58,6 +58,8 @@ export const postformations = async (formation, categorie, date, token) => {
             id: Date.now(),
             formation,
             categorie,
+            timer,
+            description,
             date
         }
     });
@@ -68,7 +70,6 @@ export const postformations = async (formation, categorie, date, token) => {
  */
 export const getFormations = async (token) => {
     return Promise.resolve([
-        { id: 1, titre: "Développement React", categorie: "Informatique", duree: "2026-05-10" },
-        { id: 2, titre: "UI/UX Design", categorie: "Design", duree: "2026-06-15" }
+        { id: 1, titre: "Développement Web", categorie: "Informatique",timer:'2 heures',description :'HTML - CSS - React - Nodejs', duree: "2026-05-10" },
     ]);
 };

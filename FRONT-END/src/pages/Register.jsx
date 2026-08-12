@@ -10,6 +10,7 @@ export const Register = () => {
     // pour pouvoir enregistrer le formulaire
         const [nom,setNom] = useState("");
         const [email,setEmail] = useState("");
+        const [cin,setCin] = useState("");
         const [password,setPassword] = useState("");
         const [second_pass,setSecond_pass] = useState("");
     // pour savoir si l'email est ajoute avec succes ou erreur == verification visuelle
@@ -58,7 +59,7 @@ export const Register = () => {
         const inscrire = async(e) => {
             e.preventDefault();
             // Validation préalable
-            if (!nom || !email || !password ||!second_pass) {
+            if (!nom || !email || !password ||!second_pass || cin) {
                 notification("Veuillez remplir tous les champs", false);
                 return; // pour stopper la fonction
             }
@@ -97,11 +98,12 @@ export const Register = () => {
                     </div>
                     <div className='font-extrabold text-white m-10 text-center duration-200 animate-bounce'>INSCRIVEZ-VOUS !</div>
                 </div>
-                <div className='md:w-[60%] lg:w-full m-3 text-center items-center justify-center'>
-                <h1 className='font-extrabold m-4 text-3xl'><span>IM </span>TECH INFO</h1>
+                <div className='md:w-[60%] lg:w-full m-2 text-center items-center justify-center'>
+                <h1 className='font-extrabold m-3 text-3xl'><span>IM </span>TECH INFO</h1>
                 <h2 className='font-extrabold m-2 text-md'>Créer un compte</h2>
                 <p className='text-gray-400 m-2 text-[0.9rem]'>Remplissez les informations ci-dessous</p>
                 <input type="text" onChange={(e)=> setNom(e.target.value)} placeholder='Nom Complet' className='border w-full md:w-[58%] p-2 m-2 rounded-lg text-black focus:text-black'/><br />
+                <input type="text" onChange={(e)=> setCin(e.target.value)} placeholder='CIN' className='border w-full md:w-[58%] p-2 m-2 rounded-lg text-black focus:text-black'/><br />
                 <input type="email" onChange={(e)=> setEmail(e.target.value)} placeholder='Email' className='border w-full md:w-[58%] p-2 m-2 rounded-lg text-black focus:text-black'/><br />
                 <input type="password" onChange={(e)=> setPassword(e.target.value)} placeholder='Mot de passe' className='border w-full md:w-[58%] p-2 m-2 rounded-lg text-black focus:text-black'/><br />
                 <input type="password"  onChange={(e)=> setSecond_pass(e.target.value)} placeholder='Confirmer votre mot de passe' className='border w-full md:w-[58%] p-2 m-2 rounded-lg text-black focus:text-black'/><br />

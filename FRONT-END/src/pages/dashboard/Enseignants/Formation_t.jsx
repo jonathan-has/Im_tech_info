@@ -1,352 +1,392 @@
 import React, { useState, useEffect } from 'react';
-import { FaEye, FaPenToSquare, FaTrash, FaCheck, FaX, FaXmark } from 'react-icons/fa6';
+import { FaEye, FaCheck, FaX, FaXmark, FaGraduationCap, FaFolderOpen } from 'react-icons/fa6';
 import { postformations, getFormations } from '../../../services/Dashboard/superadmin/superadminformation';
+import { getElementsEnseignant } from '../../../services/liste_element';
 
 export const Formations_t = () => {
-   // Hooks d'état de la liste et des modales
-      const [formations, setFormations] = useState([]);
-      const [affichage, setAffichage] = useState(false); // Contrôle la modale d'ajout
-      const [affichageVoir, setAffichageVoir] = useState(false); // Contrôle la modale de détails
-      const [affichageEdit, setAffichageEdit] = useState(false); // Contrôle la modale d'édition
-      const [chargement, setChargement] = useState(false);
-  
-      // Formation sélectionnée (pour voir ou modifier)
-      const [elementSelectionne, setElementSelectionne] = useState(null);
-  
-      // Formulaire d'ajout
-      const [titre, setTitre] = useState('');
-      const [categorie, setCategorie] = useState('');
-  
-      // Formulaire de modification
-      const [editTitre, setEditTitre] = useState('');
-      const [editCategorie, setEditCategorie] = useState('');
-  
-      // Notification Pop-up (Toast)
-      const [visible, setVisible] = useState(false);
-      const [message, setMessage] = useState("");
-      const [success, setSuccess] = useState(true);
-  
-      // Fonction pour déclencher la notification
-      const afficherNotification = (msg, estSucces) => {
-          setMessage(msg);
-          setSuccess(estSucces);
-          setVisible(true);
-          setTimeout(() => {
-              setVisible(false);
-          }, 3000);
-      };
-  
-      // Charger les formations depuis l'API
-      const chargerFormations = async () => {
-          const token = localStorage.getItem('token');
-          try {
-              const res = await getFormations(token);
-              setFormations(res || []);
-          } catch (error) {
-              afficherNotification("Erreur lors du chargement des formations", false);
-          }
-      };
-  
-      useEffect(() => {
-          chargerFormations();
-      }, []);
-  
-      // Fonction d'ajout avec génération automatique de la date
-      const ajouterFormation = async () => {
-          if (!titre || !categorie) {
-              afficherNotification("Veuillez remplir le titre et la catégorie !", false);
-          } else {
-              setChargement(true);
-              const token = localStorage.getItem('token');
-              
-              // Génération automatique de la date au format YYYY-MM-DD
-              const dateAutomatique = new Date().toISOString().split('T')[0];
-  
-              // Appel de la fonction du service avec la date générée
-              const res = await postformations(titre, categorie, dateAutomatique, token);
-  
-              if (res && res.success) {
-                  afficherNotification(res.message || "Formation créée avec succès !", true);
-                  setTitre('');
-                  setCategorie('');
-                  setAffichage(false); // Ferme la modale
-                  chargerFormations();  // Rafraîchit le tableau
-              } else {
-                  afficherNotification((res && res.message) || "Erreur lors de la création.", false);
-              }
-  
-              setChargement(false);
-          }
-      };
-  
-      // ACTION : Supprimer une formation
-      const supprimerFormation = (id, titreFormation) => {
-          const nouvelleListe = formations.filter((item) => item.id !== id);
-          setFormations(nouvelleListe);
-          afficherNotification(`Formation "${titreFormation}" supprimée !`, true);
-      };
-  
-      // ACTION : Ouvrir les détails
-      const ouvrirVoir = (item) => {
-          setElementSelectionne(item);
-          setAffichageVoir(true);
-      };
-  
-      // ACTION : Ouvrir la modification
-      const ouvrirEdit = (item) => {
-          setElementSelectionne(item);
-          setEditTitre(item.titre);
-          setEditCategorie(item.categorie);
-          setAffichageEdit(true);
-      };
-  
-      // ACTION : Sauvegarder la modification
-      const enregistrerModification = () => {
-          if (!editTitre || !editCategorie) {
-              afficherNotification("Veuillez remplir le titre et la catégorie !", false);
-          } else {
-              const listeMiseAJour = formations.map((item) => {
-                  if (item.id === elementSelectionne.id) {
-                      return {
-                          ...item,
-                          titre: editTitre,
-                          categorie: editCategorie
-                      };
-                  } else {
-                      return item;
-                  }
-              });
-  
-              setFormations(listeMiseAJour);
-              setAffichageEdit(false);
-              afficherNotification("Formation mise à jour avec succès !", true);
-          }
-      };
-  
-      // Style dynamique du bouton
-      let classe;
-      if (chargement) {
-          classe = 'opacity-50 pointer-events-none md:w-[80%] w-full border text-center items-center m-3 p-3 bg-blue-900 font-bold text-white rounded-md duration-200';
-      } else {
-          classe = 'opacity-100 md:w-[80%] w-full border text-center items-center m-3 p-3 bg-blue-900 font-bold text-white rounded-md duration-200 cursor-pointer active:scale-95';
-      }
-  
-      // Icône de notification
-      let icone;
-      if (success) {
-          icone = <FaCheck size={20} className="border-2 rounded-2xl text-green-600 border-green-600 p-0.5" />;
-      } else {
-          icone = <FaX size={20} className="border-2 rounded-2xl text-red-600 border-red-600 p-0.5" />;
-      }
-  
-      // Classe de transition de la notification (Positionnée à GAUCHE)
-      let notification_classe;
-      if (visible) {
-          notification_classe = 'z-50 opacity-100 translate-x-0 transition-all duration-300 fixed top-4 left-4 flex p-3 gap-3 items-center font-bold rounded-xl bg-white text-slate-800 shadow-xl border border-slate-200';
-      } else {
-          notification_classe = 'z-50 opacity-0 -translate-x-10 transition-all duration-300 fixed top-4 left-4 pointer-events-none flex p-3 gap-3 items-center font-bold rounded-xl bg-white text-slate-800 shadow-xl border border-slate-200';
-      }
-  
-      // Modale d'ajout
-      let contenuModale = null;
-      if (affichage) {
-          contenuModale = (
-              <div className='fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200'>
-                  <div className='relative w-full max-w-lg bg-slate-800 text-white p-6 rounded-2xl shadow-2xl flex flex-col items-center text-center'>
-                      
-                      {/* Croix de fermeture */}
-                      <button 
-                          onClick={() => setAffichage(false)}
-                          className='absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-full hover:bg-slate-700 transition-colors'
-                      >
-                          <FaXmark className='text-xl' />
-                      </button>
-  
-                      <h1 className='font-extrabold text-2xl mb-1'>Ajouter une formation</h1>
-                      <p className='text-gray-400 mb-4 text-[0.9rem]'>Créer une nouvelle formation</p>
-  
-                      <div className='w-full flex flex-col items-center'>
-                          <input
-                              type="text"
-                              value={titre}
-                              onChange={(e) => setTitre(e.target.value)}
-                              placeholder='Nom de la formation (ex: Développement Web)'
-                              className='border border-slate-600 bg-slate-900 w-full md:w-[80%] p-2.5 m-2 rounded-lg text-white focus:outline-none focus:border-blue-500'
-                          />
-                          <input
-                              type='text'
-                              value={categorie}
-                              onChange={(e) => setCategorie(e.target.value)}
-                              placeholder='Catégorie (ex: Informatique)'
-                              className='border border-slate-600 bg-slate-900 w-full md:w-[80%] p-2.5 m-2 rounded-lg text-white focus:outline-none focus:border-blue-500'
-                          />
-  
-                          {/* Bouton d'action */}
-                          <button 
-                              onClick={ajouterFormation} 
-                              disabled={chargement} 
-                              className={classe}
-                          >
-                              {chargement ? 'Enregistrement...' : 'Ajouter la formation'}
-                          </button>
-                      </div>
-                  </div>
-              </div>
-          );
-      }
-  
-      // Modale de détails (Voir)
-      let contenuModaleVoir = null;
-      if (affichageVoir && elementSelectionne) {
-          contenuModaleVoir = (
-              <div className='fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200'>
-                  <div className='relative w-full max-w-md bg-white text-slate-800 p-6 rounded-2xl shadow-2xl flex flex-col items-start'>
-                      <button 
-                          onClick={() => setAffichageVoir(false)}
-                          className='absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors'
-                      >
-                          <FaXmark className='text-xl' />
-                      </button>
-  
-                      <h1 className='font-extrabold text-2xl mb-4 text-purple-700'>Détails de la formation</h1>
-                      
-                      <div className='w-full space-y-3 text-left border-t pt-3'>
-                          <p><span className='font-bold text-slate-600'>Titre :</span> {elementSelectionne.titre}</p>
-                          <p><span className='font-bold text-slate-600'>Catégorie :</span> {elementSelectionne.categorie}</p>
-                          <p><span className='font-bold text-slate-600'>Date d'ajout :</span> {elementSelectionne.date_creation || elementSelectionne.duree || 'N/A'}</p>
-                      </div>
-  
-                      <button 
-                          onClick={() => setAffichageVoir(false)} 
-                          className='w-full mt-6 p-2.5 bg-slate-800 text-white font-bold rounded-lg hover:bg-slate-900 transition-colors'
-                      >
-                          Fermer
-                      </button>
-                  </div>
-              </div>
-          );
-      }
-  
-      // Modale de modification (Edit)
-      let contenuModaleEdit = null;
-      if (affichageEdit && elementSelectionne) {
-          contenuModaleEdit = (
-              <div className='fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200'>
-                  <div className='relative w-full max-w-lg bg-slate-800 text-white p-6 rounded-2xl shadow-2xl flex flex-col items-center text-center'>
-                      <button 
-                          onClick={() => setAffichageEdit(false)}
-                          className='absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-full hover:bg-slate-700 transition-colors'
-                      >
-                          <FaXmark className='text-xl' />
-                      </button>
-  
-                      <h1 className='font-extrabold text-2xl mb-1'>Modifier la formation</h1>
-                      <p className='text-gray-400 mb-4 text-[0.9rem]'>Mettre à jour les informations</p>
-  
-                      <div className='w-full flex flex-col items-center'>
-                          <input
-                              type="text"
-                              value={editTitre}
-                              onChange={(e) => setEditTitre(e.target.value)}
-                              placeholder='Nom de la formation'
-                              className='border border-slate-600 bg-slate-900 w-full md:w-[80%] p-2.5 m-2 rounded-lg text-white focus:outline-none focus:border-blue-500'
-                          />
-                          <input
-                              type='text'
-                              value={editCategorie}
-                              onChange={(e) => setEditCategorie(e.target.value)}
-                              placeholder='Catégorie'
-                              className='border border-slate-600 bg-slate-900 w-full md:w-[80%] p-2.5 m-2 rounded-lg text-white focus:outline-none focus:border-blue-500'
-                          />
-  
-                          <button 
-                              onClick={enregistrerModification} 
-                              className='opacity-100 md:w-[80%] w-full border text-center items-center m-3 p-3 bg-amber-600 font-bold text-white rounded-md duration-200 cursor-pointer active:scale-95'
-                          >
-                              Enregistrer les modifications
-                          </button>
-                      </div>
-                  </div>
-              </div>
-          );
-      }
-  
-      // Gestion de l'affichage de la liste sans opérateur ternaire
-      let listeFormations = null;
-      if (formations.length === 0) {
-          listeFormations = (
-              <div className='p-4 text-center text-gray-500 border-b'>Aucune formation trouvée.</div>
-          );
-      } else {
-          listeFormations = formations.map((item, index) => (
-              <div key={item.id || index} className='p-3 rounded-md border-b border-gray-100 hover:bg-slate-50 grid grid-cols-7 items-center text-sm transition-colors'>
-                  <div className='col-span-3 font-bold text-slate-900'>{item.titre}</div>
-                  <div className='col-span-2 inline-block text-slate-700 px-2.5 py-1 rounded-full text-md'>
-                      {item.categorie}
-                  </div>
-                  <div className='col-span-1 text-gray-500'>{item.date_creation || item.duree || 'N/A'}</div>
-                  <div className='col-span-1 flex items-center justify-end gap-3 text-gray-500'>
-                      <div 
-                          onClick={() => ouvrirVoir(item)} 
-                          className='cursor-pointer hover:text-blue-600 active:scale-95 transition-all p-1'
-                          title="Voir"
-                      >
-                          <FaEye />
-                      </div>
-                      <div 
-                          onClick={() => ouvrirEdit(item)} 
-                          className='cursor-pointer hover:text-amber-600 active:scale-95 transition-all p-1'
-                          title="Modifier"
-                      >
-                          <FaPenToSquare />
-                      </div>
-                      <div 
-                          onClick={() => supprimerFormation(item.id, item.titre)} 
-                          className='cursor-pointer hover:text-red-600 active:scale-95 transition-all p-1'
-                          title="Supprimer"
-                      >
-                          <FaTrash className='text-red-600' />
-                      </div>
-                  </div>
-              </div>
-          ));
-      }
-  
-      return (
-          <main className='relative m-7 col-span-6 font-sans text-slate-800'>
-  
-              {/* POP-UP DE NOTIFICATION (TOAST À GAUCHE) */}
-              <div className={notification_classe}>
-                  {icone} {message}
-              </div>
-  
-              {/* MODALES D'INTERACTION */}
-              {contenuModale}
-              {contenuModaleVoir}
-              {contenuModaleEdit}
-  
-              {/* EN-TÊTE DE LA PAGE */}
-              <div className='w-full flex items-center justify-between mb-4'>
-                  <div className='font-extrabold text-xl'>Mes Formations</div>
-                  <div
-                      className='p-2.5 bg-purple-600 hover:bg-purple-700 rounded-md text-white duration-200 active:scale-95 cursor-pointer font-medium shadow-md'
-                      onClick={() => setAffichage(true)}
-                  >
-                      + Nouvelle formation
-                  </div>
-              </div>
-  
-              {/* EN-TÊTE DU TABLEAU */}
-              <div className='bg-gray-200 p-3 rounded-md mt-2 grid grid-cols-7 font-bold text-black-700 text-sm'>
-                  <div className='col-span-3'>Titres</div>
-                  <div className='col-span-2'>Catégories</div>
-                  <div className='col-span-1'>Date d'ajout</div>
-                  <div className='col-span-1 text-right pr-2'>Actions</div>
-              </div>
-  
-              {/* LISTE DYNAMIQUE DES FORMATIONS */}
-              {listeFormations}
-  
-          </main>
-      );
+    // Hooks d'état de la liste et des modales
+    const [formations, setFormations] = useState([]);
+    const [affichage, setAffichage] = useState(false); // Contrôle la modale d'ajout
+    const [affichageVoir, setAffichageVoir] = useState(false); // Contrôle la modale principale "Détails"
+    const [chargement, setChargement] = useState(false);
+    const [chargementElements, setChargementElements] = useState(false);
+
+    // Contrôle des pop-ups secondaires (Détails Élèves / Détails Supports)
+    const [affichageEleves, setAffichageEleves] = useState(false);
+    const [affichageSupports, setAffichageSupports] = useState(false);
+
+    // Formation sélectionnée et ses données dynamiques
+    const [elementSelectionne, setElementSelectionne] = useState(null);
+
+    // Formulaire d'ajout
+    const [titre, setTitre] = useState('');
+    const [categorie, setCategorie] = useState('');
+
+    // Notification Pop-up (Toast)
+    const [visible, setVisible] = useState(false);
+    const [message, setMessage] = useState("");
+    const [success, setSuccess] = useState(true);
+
+    // Fonction pour déclencher la notification
+    const afficherNotification = (msg, estSucces) => {
+        setMessage(msg);
+        setSuccess(estSucces);
+        setVisible(true);
+        setTimeout(() => {
+            setVisible(false);
+        }, 3000);
+    };
+
+    // Charger les formations depuis l'API
+    const chargerFormations = async () => {
+        const token = localStorage.getItem('token');
+        try {
+            const res = await getFormations(token);
+            setFormations(res || []);
+        } catch (error) {
+            afficherNotification("Erreur lors du chargement des formations", false);
+        }
+    };
+
+    useEffect(() => {
+        chargerFormations();
+    }, []);
+
+    // Fonction d'ajout avec génération automatique de la date
+    const ajouterFormation = async () => {
+        if (!titre || !categorie) {
+            afficherNotification("Veuillez remplir le titre et la catégorie !", false);
+        } else {
+            setChargement(true);
+            const token = localStorage.getItem('token');
+            
+            const dateAutomatique = new Date().toISOString().split('T')[0];
+            const res = await postformations(titre, categorie, dateAutomatique, token);
+
+            if (res && res.success) {
+                afficherNotification(res.message || "Formation créée avec succès !", true);
+                setTitre('');
+                setCategorie('');
+                setAffichage(false);
+                chargerFormations();
+            } else {
+                afficherNotification((res && res.message) || "Erreur lors de la création.", false);
+            }
+
+            setChargement(false);
+        }
+    };
+
+    // ACTION : Ouvrir les détails et récupérer dynamiquement les élèves & supports via API
+    const ouvrirVoir = async (item) => {
+        setElementSelectionne(item);
+        setAffichageVoir(true);
+        setChargementElements(true);
+
+        const token = localStorage.getItem('token');
+        try {
+            const elements = await getElementsEnseignant(item.id, token);
+            if (elements) {
+                setElementSelectionne({
+                    ...item,
+                    eleves: elements.eleves || elements.students || [],
+                    supports: elements.supports || elements.cours || elements.files || []
+                });
+            }
+        } catch (error) {
+            afficherNotification("Erreur lors de la récupération des détails.", false);
+        } finally {
+            setChargementElements(false);
+        }
+    };
+
+    // Style dynamique du bouton d'ajout
+    let classe;
+    if (chargement) {
+        classe = 'opacity-50 pointer-events-none w-full border text-center items-center my-3 p-3 bg-blue-900 font-bold text-white rounded-lg duration-200';
+    } else {
+        classe = 'opacity-100 w-full border text-center items-center my-3 p-3 bg-blue-900 font-bold text-white rounded-lg duration-200 cursor-pointer active:scale-95 hover:bg-blue-800';
+    }
+
+    // Icône de notification
+    let icone;
+    if (success) {
+        icone = <FaCheck size={18} className="border-2 rounded-full text-green-600 border-green-600 p-0.5 shrink-0" />;
+    } else {
+        icone = <FaX size={18} className="border-2 rounded-full text-red-600 border-red-600 p-0.5 shrink-0" />;
+    }
+
+    // Classe de transition de la notification
+    let notification_classe;
+    if (visible) {
+        notification_classe = 'z-50 opacity-100 translate-y-0 transition-all duration-300 fixed top-4 left-4 right-4 sm:right-auto sm:max-w-md flex p-3 gap-3 items-center font-bold rounded-xl bg-white text-slate-800 shadow-xl border border-slate-200 text-sm';
+    } else {
+        notification_classe = 'z-50 opacity-0 -translate-y-10 pointer-events-none transition-all duration-300 fixed top-4 left-4 right-4 sm:right-auto sm:max-w-md flex p-3 gap-3 items-center font-bold rounded-xl bg-white text-slate-800 shadow-xl border border-slate-200 text-sm';
+    }
+
+    // Modale d'ajout
+    let contenuModale = null;
+    if (affichage) {
+        contenuModale = (
+            <div className='fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200'>
+                <div className='relative w-full max-w-md bg-slate-800 text-white p-5 sm:p-6 rounded-2xl shadow-2xl flex flex-col items-center text-center max-h-[90vh] overflow-y-auto'>
+                    <button 
+                        onClick={() => setAffichage(false)}
+                        className='absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-full hover:bg-slate-700 transition-colors'
+                    >
+                        <FaXmark className='text-xl' />
+                    </button>
+
+                    <h1 className='font-extrabold text-xl sm:text-2xl mb-1 mt-2'>Ajouter une formation</h1>
+                    <p className='text-gray-400 mb-4 text-xs sm:text-sm'>Créer une nouvelle formation</p>
+
+                    <div className='w-full flex flex-col items-center gap-2'>
+                        <input
+                            type="text"
+                            value={titre}
+                            onChange={(e) => setTitre(e.target.value)}
+                            placeholder='Nom de la formation (ex: Développement Web)'
+                            className='border border-slate-600 bg-slate-900 w-full p-2.5 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500'
+                        />
+                        <input
+                            type='text'
+                            value={categorie}
+                            onChange={(e) => setCategorie(e.target.value)}
+                            placeholder='Catégorie (ex: Informatique)'
+                            className='border border-slate-600 bg-slate-900 w-full p-2.5 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500'
+                        />
+
+                        <button 
+                            onClick={ajouterFormation} 
+                            disabled={chargement} 
+                            className={classe}
+                        >
+                            {chargement ? 'Enregistrement...' : 'Ajouter la formation'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // Modale principale : Détails de la formation
+    let contenuModaleVoir = null;
+    if (affichageVoir && elementSelectionne) {
+        contenuModaleVoir = (
+            <div className='fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200'>
+                <div className='relative w-full max-w-md bg-white text-slate-800 p-5 sm:p-6 rounded-2xl shadow-2xl flex flex-col items-start max-h-[85vh] overflow-y-auto'>
+                    <button 
+                        onClick={() => setAffichageVoir(false)}
+                        className='absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors'
+                    >
+                        <FaXmark className='text-xl' />
+                    </button>
+
+                    <h1 className='font-extrabold text-xl sm:text-2xl mb-3 pr-8 text-purple-700'>Détails de la formation</h1>
+
+                    {/* INFOS GENERALES */}
+                    <div className='w-full space-y-1.5 text-xs sm:text-sm text-left border-t pt-3 mb-5'>
+                        <p><span className='font-bold text-slate-600'>Titre :</span> {elementSelectionne.titre}</p>
+                        <p><span className='font-bold text-slate-600'>Catégorie :</span> {elementSelectionne.categorie}</p>
+                        <p><span className='font-bold text-slate-600'>Date d'ajout :</span> {elementSelectionne.date_creation || elementSelectionne.duree || 'N/A'}</p>
+                    </div>
+
+                    {/* BOUTONS DÉCLENCHEURS DE POP-UP */}
+                    <div className='w-full flex flex-col gap-3 mb-2'>
+                        <button 
+                            onClick={() => setAffichageEleves(true)} 
+                            className='w-full flex items-center justify-center gap-2 py-3 px-4 text-xs sm:text-sm font-bold rounded-xl transition-all cursor-pointer bg-blue-600 hover:bg-blue-700 text-white shadow-md active:scale-95'
+                        >
+                            <FaGraduationCap className='text-lg' />
+                            Voir les Élèves
+                        </button>
+
+                        <button 
+                            onClick={() => setAffichageSupports(true)} 
+                            className='w-full flex items-center justify-center gap-2 py-3 px-4 text-xs sm:text-sm font-bold rounded-xl transition-all cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white shadow-md active:scale-95'
+                        >
+                            <FaFolderOpen className='text-lg' />
+                            Voir les Supports
+                        </button>
+                    </div>
+
+                    <button 
+                        onClick={() => setAffichageVoir(false)} 
+                        className='w-full mt-4 p-2.5 bg-slate-800 text-white font-bold rounded-lg text-sm hover:bg-slate-900 transition-colors'
+                    >
+                        Fermer
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    // POP-UP 1 : Modale Liste des Élèves (UNIQUEMENT LE NOM)
+    let contenuModaleEleves = null;
+    if (affichageEleves && elementSelectionne) {
+        let listeEleves = null;
+        if (chargementElements) {
+            listeEleves = <p className='text-xs text-blue-600 font-bold py-6 text-center animate-pulse'>Chargement des élèves...</p>;
+        } else if (elementSelectionne.eleves && elementSelectionne.eleves.length > 0) {
+            listeEleves = elementSelectionne.eleves.map((eleve, index) => (
+                <div key={eleve.id || index} className='p-2.5 border-b border-slate-100 flex items-center text-xs sm:text-sm hover:bg-slate-50 rounded-md transition-colors font-medium text-slate-800 truncate'>
+                    {eleve.nom || eleve.name || eleve.prenom || `Élève #${index + 1}`}
+                </div>
+            ));
+        } else {
+            listeEleves = <p className='text-xs text-gray-400 py-6 text-center'>Aucun élève inscrit pour le moment.</p>;
+        }
+
+        contenuModaleEleves = (
+            <div className='fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4 animate-in fade-in duration-200'>
+                <div className='relative w-full max-w-md bg-white text-slate-800 p-5 sm:p-6 rounded-2xl shadow-2xl flex flex-col max-h-[80vh] overflow-y-auto'>
+                    <button 
+                        onClick={() => setAffichageEleves(false)}
+                        className='absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors'
+                    >
+                        <FaXmark className='text-xl' />
+                    </button>
+
+                    <div className='flex items-center gap-2 text-blue-600 font-extrabold text-lg sm:text-xl mb-1'>
+                        <FaGraduationCap className='text-2xl' />
+                        <h2>Liste des Élèves</h2>
+                    </div>
+                    <p className='text-xs text-slate-500 mb-4 truncate'>Formation : {elementSelectionne.titre}</p>
+
+                    <div className='w-full max-h-60 overflow-y-auto bg-slate-50 rounded-xl p-2 border border-slate-100 space-y-1 mb-4'>
+                        {listeEleves}
+                    </div>
+
+                    <button 
+                        onClick={() => setAffichageEleves(false)} 
+                        className='w-full p-2.5 bg-blue-600 text-white font-bold rounded-lg text-sm hover:bg-blue-700 transition-colors'
+                    >
+                        Fermer
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    // POP-UP 2 : Modale Liste des Supports
+    let contenuModaleSupports = null;
+    if (affichageSupports && elementSelectionne) {
+        let listeSupports = null;
+        if (chargementElements) {
+            listeSupports = <p className='text-xs text-emerald-600 font-bold py-6 text-center animate-pulse'>Chargement des supports...</p>;
+        } else if (elementSelectionne.supports && elementSelectionne.supports.length > 0) {
+            listeSupports = elementSelectionne.supports.map((sup, index) => (
+                <a 
+                    key={sup.id || index} 
+                    href={sup.lien || sup.url || '#'} 
+                    target='_blank' 
+                    rel='noreferrer'
+                    className='p-2.5 border-b border-slate-100 flex items-center text-xs sm:text-sm font-medium text-slate-800 hover:text-emerald-600 hover:bg-slate-50 rounded-md transition-colors truncate'
+                >
+                    {sup.titre || sup.nom || sup.libelle || `Support #${index + 1}`}
+                </a>
+            ));
+        } else {
+            listeSupports = <p className='text-xs text-gray-400 py-6 text-center'>Aucun support disponible.</p>;
+        }
+
+        contenuModaleSupports = (
+            <div className='fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4 animate-in fade-in duration-200'>
+                <div className='relative w-full max-w-md bg-white text-slate-800 p-5 sm:p-6 rounded-2xl shadow-2xl flex flex-col max-h-[80vh] overflow-y-auto'>
+                    <button 
+                        onClick={() => setAffichageSupports(false)}
+                        className='absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors'
+                    >
+                        <FaXmark className='text-xl' />
+                    </button>
+
+                    <div className='flex items-center gap-2 text-emerald-600 font-extrabold text-lg sm:text-xl mb-1'>
+                        <FaFolderOpen className='text-2xl' />
+                        <h2>Supports de cours</h2>
+                    </div>
+                    <p className='text-xs text-slate-500 mb-4 truncate'>Formation : {elementSelectionne.titre}</p>
+
+                    <div className='w-full max-h-60 overflow-y-auto bg-slate-50 rounded-xl p-2 border border-slate-100 space-y-1 mb-4'>
+                        {listeSupports}
+                    </div>
+
+                    <button 
+                        onClick={() => setAffichageSupports(false)} 
+                        className='w-full p-2.5 bg-emerald-600 text-white font-bold rounded-lg text-sm hover:bg-emerald-700 transition-colors'
+                    >
+                        Fermer
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    // Gestion de l'affichage de la liste des formations
+    let listeFormations = null;
+    if (formations.length === 0) {
+        listeFormations = (
+            <div className='p-4 text-center text-gray-500 border-b text-xs sm:text-sm'>Aucune formation trouvée.</div>
+        );
+    } else {
+        listeFormations = formations.map((item, index) => (
+            <div key={item.id || index} className='p-3 rounded-md border-b border-gray-100 hover:bg-slate-50 grid grid-cols-12 items-center text-xs sm:text-sm transition-colors gap-2'>
+                <div className='col-span-8 sm:col-span-5 md:col-span-4 font-bold text-slate-900 truncate'>{item.titre}</div>
+                
+                <div className='hidden sm:block sm:col-span-4 md:col-span-4 text-slate-700 truncate'>
+                    {item.categorie}
+                </div>
+                
+                <div className='hidden md:block md:col-span-3 text-gray-500 truncate'>{item.date_creation || item.duree || 'N/A'}</div>
+                
+                <div className='col-span-4 sm:col-span-3 md:col-span-1 flex items-center justify-end text-gray-500 pr-1'>
+                    <button 
+                        onClick={() => ouvrirVoir(item)} 
+                        className='cursor-pointer text-slate-900 hover:text-blue-600 hover:bg-blue-50 active:scale-95 transition-all p-2 rounded-full flex items-center gap-1 font-medium'
+                        title="Voir tout"
+                    >
+                        <FaEye className='text-base sm:text-lg' />
+                        <span className='sm:hidden text-xs font-semibold'>Voir</span>
+                    </button>
+                </div>
+            </div>
+        ));
+    }
+
+    return (
+        <main className='relative m-3 sm:m-7 font-sans text-slate-800'>
+            {/* POP-UP DE NOTIFICATION */}
+            <div className={notification_classe}>
+                {icone} <span>{message}</span>
+            </div>
+
+            {/* MODALES D'INTERACTION ET POP-UPS */}
+            {contenuModale}
+            {contenuModaleVoir}
+            {contenuModaleEleves}
+            {contenuModaleSupports}
+
+            {/* EN-TÊTE DE LA PAGE */}
+            <div className='w-full flex flex-row items-center justify-between mb-4 gap-2'>
+                <h1 className='font-extrabold text-lg sm:text-xl text-slate-900 truncate'>Mes Formations</h1>
+                <button
+                    className='p-2 sm:p-2.5 bg-purple-600 hover:bg-purple-700 rounded-md text-white duration-200 active:scale-95 cursor-pointer font-medium shadow-md text-xs sm:text-sm shrink-0'
+                    onClick={() => setAffichage(true)}
+                >
+                    + Nouvelle formation
+                </button>
+            </div>
+
+            {/* EN-TÊTE DU TABLEAU */}
+            <div className='bg-gray-200 p-3 rounded-md mt-2 grid grid-cols-12 font-bold text-slate-700 text-xs sm:text-sm gap-2'>
+                <div className='col-span-8 sm:col-span-5 md:col-span-4'>Titres</div>
+                <div className='hidden sm:block sm:col-span-4 md:col-span-4'>Catégories</div>
+                <div className='hidden md:block md:col-span-3'>Date d'ajout</div>
+                <div className='col-span-4 sm:col-span-3 md:col-span-1 text-right pr-2'>Actions</div>
+            </div>
+
+            {/* LISTE DYNAMIQUE DES FORMATIONS */}
+            {listeFormations}
+
+        </main>
+    );
 };

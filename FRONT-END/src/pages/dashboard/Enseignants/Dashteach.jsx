@@ -52,7 +52,7 @@ export const Dashteach = () => {
   return (
     <main className='m-7 col-span-6'>
       <div className='flex justify-between w-full'>
-        <h1 className='font-extrabold text-xl'>Tableau de bord</h1>
+        <h1 className='font-extrabold md:text-xl text-md'>Tableau de bord</h1>
         <div className='flex items-center gap-2'>
           <div className='border-2 w-7 h-7 rounded-2xl p-2 bg-amber-300'></div>
           <div className='font-bold text-md'>{teacher_name}</div> 
@@ -62,7 +62,7 @@ export const Dashteach = () => {
           </div>
         </div>
       </div>
-      <div className='m-10 flex gap-5'>
+      <div className='m-10 flex md:flex-row flex-wrap flex-col items-center justify-center gap-6'>
           <Card_propos
               logo = {<FaBook size={20} className='text-blue-500'/>}
               tittle = "Formations"

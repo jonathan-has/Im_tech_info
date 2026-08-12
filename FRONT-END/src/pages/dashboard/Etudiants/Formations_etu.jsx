@@ -70,12 +70,14 @@ export const Formations_etu = () => {
           );
       } else {
           listeFormations = formations.map((item, index) => (
-              <div key={item.id || index} className='p-3 rounded-md border-b border-gray-100 hover:bg-slate-50 grid grid-cols-7 items-center text-sm transition-colors'>
-                  <div className='col-span-3 font-bold text-slate-900'>{item.titre}</div>
-                  <div className='col-span-2 inline-block text-slate-700 px-2.5 py-1 rounded-full text-md'>
-                      {item.categorie}
-                  </div>
-                  <div className='col-span-1 text-gray-500'>{item.date_creation || item.duree || 'N/A'}</div>
+            <div key={item.id || index} className='p-3 rounded-md border-b border-gray-100 hover:bg-slate-50 grid grid-cols-7 items-center text-sm transition-colors'>
+                <div className='md:col-span-3 col-span-5 font-bold text-slate-900'>{item.titre}</div>
+                <div className='md:block hidden'>
+                    <div className='md:col-span-2 col-span-3 text-xs inline-block text-slate-700 px-2.5 py-1 rounded-full text-md'>
+                        {item.categorie}
+                    </div>
+                </div>
+                <div className='md:col-span-1 hidden text-gray-500'>{item.date_creation || item.duree || 'N/A'}</div>
               </div>
           ));
       }
@@ -91,9 +93,9 @@ export const Formations_etu = () => {
               </div>
               {/* EN-TÊTE DU TABLEAU */}
               <div className='bg-gray-200 p-3 rounded-md mt-2 grid grid-cols-7 font-bold text-black-700 text-sm'>
-                  <div className='col-span-3'>Titres</div>
-                  <div className='col-span-2'>Catégories</div>
-                  <div className='col-span-1'>Date d'ajout</div>
+                  <div className='md:col-span-3 col-span-5'>Titres</div>
+                  <div className='md:col-span-2 hidden'>Catégories</div>
+                  <div className='md:col-span-1 hidden'>Date d'ajout</div>
               </div>
   
               {/* LISTE DYNAMIQUE DES FORMATIONS */}

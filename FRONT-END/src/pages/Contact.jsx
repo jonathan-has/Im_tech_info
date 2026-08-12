@@ -3,7 +3,7 @@ import Card_home from "../components/ui/Card_home"; //reutilisable
 import { FaCircleDot, FaCirclePlay } from 'react-icons/fa6';
 import { FaBook,FaFile,FaUserGraduate,FaClock} from 'react-icons/fa';
 import { FaUserFriends,FaLightbulb,FaPlusCircle,FaInfoCircle,FaGraduationCap,FaBullseye,FaCheckCircle} from 'react-icons/fa';
-import { FaHeart } from 'react-icons/fa6';
+import { FaHeart,FaFacebook } from 'react-icons/fa6';
 import { FaUser,FaEnvelope,FaLocationDot } from "react-icons/fa6";
 import { FaGem,FaPhone } from 'react-icons/fa';
 import { FaPaperPlane } from 'react-icons/fa6';
@@ -32,7 +32,7 @@ export const Contact = () => {
                   </div>
                   <div className='flex flex-col'>
                     <div className='font-bold text-white ml-1 text-center'>Email</div>
-                    <div className='font-bold text-white text-center'>contact@gmail.com</div>
+                    <div className='font-bold text-white text-[0.8rem] text-center'>formation@imtechinfo.com</div>
                   </div>
                 </div>
   
@@ -42,7 +42,7 @@ export const Contact = () => {
                   </div>
                   <div className='flex flex-col'>
                     <div className='font-bold text-white ml-1 text-center'>Téléphone</div>
-                    <div className='font-bold text-white text-center'>+261 34 12 576 83</div>
+                    <div className='font-bold text-white text-center'>+261 33 37 342 21</div>
                   </div>
                 </div>
   
@@ -62,7 +62,7 @@ export const Contact = () => {
                   </div>
                   <div className='flex flex-col'>
                     <div className='font-bold text-white ml-1s text-center'>Horaires</div>
-                    <div className='font-bold text-white text-center'>Lun - Ven <br />08h00 - 09h00</div>
+                    <div className='font-bold text-white text-center'>Lun - Sam <br />08h00 - 09h00</div>
                 </div>
               </div>
               </div>
@@ -70,64 +70,37 @@ export const Contact = () => {
             </div>
         </section>
         <section className='m-4' id='contact'>
-          <div className='flex items-center lg:flex-row flex-col'>
-            <div>
-              <h1 className='m-2 font-bold text-xl text-center'>Envoyez-nous un message</h1>
-              <div className='bg-gray-200 m-4  rounded-md shadow-md shadow-gray-400 p-5 w-screen lg:w-150 flex flex-col'>
-                <div className=' flex items-center md:flex-row flex-col gap-10 p-3'>
-                  <div className=''>
-                    <label htmlFor="text" className='m-2'>Nom complet</label><br />
-                    <input type="text" placeholder='Votre nom complet' className='border border-gray-400 m-1 rounded-lg p-1 w-60'/><br />
-                    <label htmlFor="text" className='m-2'>Téléphone</label><br />
-                    <input type="text" placeholder='+261 34 90 654 86' className='border border-gray-400  m-1 rounded-lg p-1 w-60'/><br />
-                  </div>
-                  <div className=''>
-                     <label htmlFor="email" className='m-2 '>Adresse email</label><br />
-                    <input type="email" placeholder='votreemail@gmail.com' className='border border-gray-400 m-1 rounded-lg p-1 w-60'/><br />
-                    <label htmlFor="text" className='m-2 '>Sujet</label><br />
-                    <input type="text" placeholder='Ecrivez votre sujet' className='border border-gray-400 m-1 rounded-lg p-1 w-60'/><br />
-                  </div>
-                </div>
-                <label htmlFor="text">Message</label><br />
-                <textarea name="" id="" cols={40} rows={5} className='-mt-2 border p-1 border-gray-400 rounded-md' placeholder='Ecrivez-votre message ici ...'></textarea><br />
-                <button className='p-2 w-50 bg-blue-600 text-white flex items-center rounded-md duration-300  justify-center gap-4 m-2 hover:scale-105 active:scale-95 cursor-pointer'><FaPaperPlane size={20}/> Envoyer le message</button>
-              </div>
-            </div>
+          <div className='flex items-center justify-center lg:flex-row flex-col'>
             <div>
               <h1 className='m-4 text-center font-bold text-xl'>Nos informations de contact</h1>
-              <div className='flex items-center flex-col gap-4 m-1'>
-                <div className='flex items-center gap-5 xl:flex-row flex-col'>
+                <div className='flex items-center justify-center gap-5 xl:flex-row flex-col'>
+                  <a href="mailto:formation@imtechformation.com">
+                    <Card_rens
+                      style_logo="bg-blue-200 p-4 rounded-[50%]"
+                      logo={<FaEnvelope size={35} className='text-blue-500 cursor-pointer'/>}
+                      title="Email"
+                      lien= "formation@imtechformation.com"
+                      description="Nous vous répondrons dans les brefs détails"
+                    />
+                  </a>
+                  <a href="tel:+261333734221">
+                    <Card_rens
+                      style_logo="bg-green-200 p-4 rounded-[50%]"
+                      logo={<FaPhone size={35} className='text-green-700 cursor-pointer'/>}
+                      title="Téléphone"
+                      lien="033 37 342 21"
+                      description="Nous vous répondrons dans les brefs détails"
+                    />
+                  </a>
+                <a href="https://facebook.com">
                   <Card_rens
                     style_logo="bg-blue-200 p-4 rounded-[50%]"
-                    logo={<FaEnvelope size={35} className='text-blue-500 cursor-pointer'/>}
-                    title="Email"
-                    lien="contact@gmail.com"
+                    logo={<FaFacebook size={35} className='text-blue-500 cursor-pointer'/>}
+                    title="Facebook"
+                    lien="IM TECH FORMATION"
                     description="Nous vous répondrons dans les brefs détails"
                   />
-                  <Card_rens
-                    style_logo="bg-green-200 p-4 rounded-[50%]"
-                    logo={<FaPhone size={35} className='text-green-700 cursor-pointer'/>}
-                    title="Email"
-                    lien="contact@gmail.com"
-                    description="Nous vous répondrons dans les brefs détails"
-                  />
-                </div>
-                <div className='flex items-center gap-5 xl:flex-row flex-col'>
-                  <Card_rens
-                    style_logo="bg-blue-200 p-4 rounded-[50%]"
-                    logo={<FaEnvelope size={35} className='text-blue-500 cursor-pointer'/>}
-                    title="Email"
-                    lien="contact@gmail.com"
-                    description="Nous vous répondrons dans les brefs détails"
-                  />
-                  <Card_rens
-                    style_logo="bg-green-200 p-4 rounded-[50%]"
-                    logo={<FaPhone size={35} className='text-green-700 cursor-pointer'/>}
-                    title="Email"
-                    lien="contact@gmail.com"
-                    description="Nous vous répondrons dans les brefs détails"
-                  />
-                </div>
+                </a>
               </div>
             </div>
           </div>

@@ -119,11 +119,11 @@ export const User = () => {
     } else {
         listeUsers = users.map((item, index) => (
             <div key={item.id || index} className='p-3 rounded-md border-b border-gray-100 hover:bg-slate-50 grid grid-cols-7 items-center text-sm transition-colors'>
-                <div className='col-span-3 font-bold text-slate-900'>{item.titre || item.nom}</div>
-                <div className='col-span-2 inline-block text-slate-700 px-2.5 py-1 rounded-full text-md'>
-                    {item.categorie || item.role}
+                <div className='md:col-span-3 col-span-5 font-bold text-slate-900'>{item.titre || item.nom}</div>
+                <div className='hidden md:block text-xs font-normal text-slate-500 truncate'>
+                    {item.categorie ||item.role}
                 </div>
-                <div className='col-span-1 text-gray-500'>{item.date_creation || item.duree || 'N/A'}</div>
+                <div className='md:col-span-1 hidden md:block text-gray-500'>{item.date_creation || item.duree || 'N/A'}</div>
                 <div className='col-span-1 flex items-center justify-end gap-3 text-gray-500'>
                     <div 
                         onClick={() => ouvrirVoir(item)} 
@@ -162,9 +162,9 @@ export const User = () => {
 
             {/* EN-TÊTE DU TABLEAU / LISTE */}
             <div className='bg-gray-200 p-3 rounded-md mt-2 grid grid-cols-7 font-bold text-black-700 text-sm'>
-                <div className='col-span-3'>Noms</div>
-                <div className='col-span-2'>Rôles / Catégories</div>
-                <div className='col-span-1'>Date d'ajout</div>
+                <div className='md:col-span-3 col-span-5'>Noms</div>
+                <div className='md:col-span-2 hidden md:block'>Rôles / Catégories</div>
+                <div className='md:col-span-1 hidden md:block'>Date d'ajout</div>
                 <div className='col-span-1 text-right pr-2'>Actions</div>
             </div>
 

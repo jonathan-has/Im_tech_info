@@ -25,6 +25,6 @@ export const ProtectedRoute = ({role}) => {
     if (user.role !== role) {
         return <Navigate to='/' replace />;
     }
-    // 2 - si tout est ok
+    // 2 - si tout est ok il renvoie vers la page suivante
     return <Outlet/>;
 }

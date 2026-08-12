@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {FaEye,FaTrash,FaCheck,FaX,FaXmark} from "react-icons/fa6";
+import {FaEye,FaCheck,FaX,FaXmark} from "react-icons/fa6";
 import {telecharger_fichier,getSupport,postfile,deletSupport} from "../../../services/Dashboard/teacher/teachersupports";
 export const Supports_t = () => {
     // Liste des supports
@@ -423,18 +423,6 @@ export const Supports_t = () => {
 
                     {/* SUPPRIMER */}
 
-                    <div
-                        onClick={() =>
-                            supprimerSupports(
-                                item.id,
-                                item.titre || item.nom
-                            )
-                        }
-                        className="cursor-pointer hover:text-red-600 active:scale-95 p-1"
-                        title="Supprimer"
-                    >
-                        <FaTrash className="text-red-600" />
-                    </div>
 
                 </div>
 

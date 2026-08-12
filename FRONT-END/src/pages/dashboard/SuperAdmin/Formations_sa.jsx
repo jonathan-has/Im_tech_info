@@ -5,9 +5,9 @@ import { postformations, getFormations } from '../../../services/Dashboard/super
 export const Formations_sa = () => {
     // Hooks d'état de la liste et des modales
     const [formations, setFormations] = useState([]);
-    const [affichage, setAffichage] = useState(false); // Contrôle la modale d'ajout
-    const [affichageVoir, setAffichageVoir] = useState(false); // Contrôle la modale de détails
-    const [affichageEdit, setAffichageEdit] = useState(false); // Contrôle la modale d'édition
+    const [affichage, setAffichage] = useState(false); // Modale d'ajout
+    const [affichageVoir, setAffichageVoir] = useState(false); // Modale de détails
+    const [affichageEdit, setAffichageEdit] = useState(false); // Modale d'édition
     const [chargement, setChargement] = useState(false);
 
     // Formation sélectionnée (pour voir ou modifier)
@@ -16,24 +16,33 @@ export const Formations_sa = () => {
     // Formulaire d'ajout
     const [titre, setTitre] = useState('');
     const [categorie, setCategorie] = useState('');
+    const [timer, setTimer] = useState('');
+    const [description, setDescription] = useState('');
 
     // Formulaire de modification
     const [editTitre, setEditTitre] = useState('');
     const [editCategorie, setEditCategorie] = useState('');
+    const [editTimer, setEditTimer] = useState('');
+    const [editDescription, setEditDescription] = useState('');
 
     // Notification Pop-up (Toast)
     const [visible, setVisible] = useState(false);
     const [message, setMessage] = useState("");
     const [success, setSuccess] = useState(true);
 
-    // Fonction pour déclencher la notification
     const afficherNotification = (msg, estSucces) => {
         setMessage(msg);
         setSuccess(estSucces);
         setVisible(true);
-        setTimeout(() => {
-            setVisible(false);
-        }, 3000);
+        setTimeout(() => setVisible(false), 3000);
+    };
+
+    // Reinitialiser le formulaire d'ajout
+    const reinitialiserFormulaire = () => {
+        setTitre('');
+        setCategorie('');
+        setTimer('');
+        setDescription('');
     };
 
     // Charger les formations depuis l'API
@@ -41,7 +50,11 @@ export const Formations_sa = () => {
         const token = localStorage.getItem('token');
         try {
             const res = await getFormations(token);
-            setFormations(res || []);
+            if (res) {
+                setFormations(res);
+            } else {
+                setFormations([]);
+            }
         } catch (error) {
             afficherNotification("Erreur lors du chargement des formations", false);
         }
@@ -51,110 +64,141 @@ export const Formations_sa = () => {
         chargerFormations();
     }, []);
 
-    // Fonction d'ajout avec génération automatique de la date
+    // Fonction d'ajout avec génération automatique de la date par React
     const ajouterFormation = async () => {
-        if (!titre || !categorie) {
-            afficherNotification("Veuillez remplir le titre et la catégorie !", false);
-        } else {
-            setChargement(true);
-            const token = localStorage.getItem('token');
-            
-            // Génération automatique de la date au format YYYY-MM-DD
-            const dateAutomatique = new Date().toISOString().split('T')[0];
+        if (!titre || !categorie || !timer || !description) {
+            afficherNotification("Veuillez remplir tous les champs !", false);
+            return;
+        }
 
-            // Appel de la fonction du service avec la date générée
-            const res = await postformations(titre, categorie, dateAutomatique, token);
+        setChargement(true);
+        const token = localStorage.getItem('token');
+        const dateAutomatique = new Date().toISOString().split('T')[0];
 
-            if (res && res.success) {
-                afficherNotification(res.message || "Formation créée avec succès !", true);
-                setTitre('');
-                setCategorie('');
-                setAffichage(false); // Ferme la modale
-                chargerFormations();  // Rafraîchit le tableau
-            } else {
-                afficherNotification((res && res.message) || "Erreur lors de la création.", false);
+        try {
+            const res = await postformations(titre, categorie, timer, description, dateAutomatique, token);
+
+            let estReussi = false;
+            if (res) {
+                if (res.success || res.status === 200 || res.status === 201) {
+                    estReussi = true;
+                }
             }
 
+            if (estReussi) {
+                let msgSucces = "Formation créée avec succès !";
+                if (res && res.message) {
+                    msgSucces = res.message;
+                }
+                afficherNotification(msgSucces, true);
+                reinitialiserFormulaire();
+                setAffichage(false);
+                chargerFormations();
+            } else {
+                let msgErreur = "Erreur lors de la création.";
+                if (res && res.message) {
+                    msgErreur = res.message;
+                }
+                afficherNotification(msgErreur, false);
+            }
+        } catch (err) {
+            afficherNotification("Une erreur est survenue lors de l'envoi.", false);
+        } finally {
             setChargement(false);
         }
     };
 
-    // ACTION : Supprimer une formation
+    // Supprimer une formation
     const supprimerFormation = (id, titreFormation) => {
         const nouvelleListe = formations.filter((item) => item.id !== id);
         setFormations(nouvelleListe);
         afficherNotification(`Formation "${titreFormation}" supprimée !`, true);
     };
 
-    // ACTION : Ouvrir les détails
+    // Ouvrir les détails
     const ouvrirVoir = (item) => {
         setElementSelectionne(item);
         setAffichageVoir(true);
     };
 
-    // ACTION : Ouvrir la modification
+    // Ouvrir la modification
     const ouvrirEdit = (item) => {
         setElementSelectionne(item);
-        setEditTitre(item.titre);
-        setEditCategorie(item.categorie);
+        setEditTitre(item.titre || '');
+        setEditCategorie(item.categorie || '');
+        
+        let dureeValue = '';
+        if (item.timer) {
+            dureeValue = item.timer;
+        } else if (item.duree) {
+            dureeValue = item.duree;
+        }
+        setEditTimer(dureeValue);
+        
+        setEditDescription(item.description || '');
         setAffichageEdit(true);
     };
 
-    // ACTION : Sauvegarder la modification
+    // Sauvegarder la modification
     const enregistrerModification = () => {
-        if (!editTitre || !editCategorie) {
-            afficherNotification("Veuillez remplir le titre et la catégorie !", false);
-        } else {
-            const listeMiseAJour = formations.map((item) => {
-                if (item.id === elementSelectionne.id) {
-                    return {
-                        ...item,
-                        titre: editTitre,
-                        categorie: editCategorie
-                    };
-                } else {
-                    return item;
-                }
-            });
-
-            setFormations(listeMiseAJour);
-            setAffichageEdit(false);
-            afficherNotification("Formation mise à jour avec succès !", true);
+        if (!editTitre || !editCategorie || !editTimer || !editDescription) {
+            afficherNotification("Veuillez remplir tous les champs !", false);
+            return;
         }
+
+        const listeMiseAJour = formations.map((item) => {
+            if (item.id === elementSelectionne.id) {
+                return {
+                    ...item,
+                    titre: editTitre,
+                    categorie: editCategorie,
+                    timer: editTimer,
+                    description: editDescription
+                };
+            }
+            return item;
+        });
+
+        setFormations(listeMiseAJour);
+        setAffichageEdit(false);
+        afficherNotification("Formation mise à jour avec succès !", true);
     };
 
-    // Style dynamique du bouton
-    let classe;
+    // Gestion des classes et icônes avec conditions if/else
+    let classeBouton;
     if (chargement) {
-        classe = 'opacity-50 pointer-events-none md:w-[80%] w-full border text-center items-center m-3 p-3 bg-blue-900 font-bold text-white rounded-md duration-200';
+        classeBouton = 'opacity-50 pointer-events-none w-full border text-center items-center my-3 p-3 bg-blue-900 font-bold text-white rounded-md duration-200';
     } else {
-        classe = 'opacity-100 md:w-[80%] w-full border text-center items-center m-3 p-3 bg-blue-900 font-bold text-white rounded-md duration-200 cursor-pointer active:scale-95';
+        classeBouton = 'opacity-100 w-full border text-center items-center my-3 p-3 bg-blue-900 font-bold text-white rounded-md duration-200 cursor-pointer active:scale-95 hover:bg-blue-800';
     }
 
-    // Icône de notification
+    let texteBoutonAjout;
+    if (chargement) {
+        texteBoutonAjout = 'Enregistrement...';
+    } else {
+        texteBoutonAjout = 'Ajouter la formation';
+    }
+
     let icone;
     if (success) {
-        icone = <FaCheck size={20} className="border-2 rounded-2xl text-green-600 border-green-600 p-0.5" />;
+        icone = <FaCheck size={20} className="border-2 rounded-2xl text-green-600 border-green-600 p-0.5 shrink-0" />;
     } else {
-        icone = <FaX size={20} className="border-2 rounded-2xl text-red-600 border-red-600 p-0.5" />;
+        icone = <FaX size={20} className="border-2 rounded-2xl text-red-600 border-red-600 p-0.5 shrink-0" />;
     }
 
-    // Classe de transition de la notification (Positionnée à GAUCHE)
     let notification_classe;
     if (visible) {
-        notification_classe = 'z-50 opacity-100 translate-x-0 transition-all duration-300 fixed top-4 left-4 flex p-3 gap-3 items-center font-bold rounded-xl bg-white text-slate-800 shadow-xl border border-slate-200';
+        notification_classe = 'z-50 opacity-100 translate-x-0 transition-all duration-300 fixed top-4 left-4 flex p-3 gap-3 items-center font-bold rounded-xl bg-white text-slate-800 shadow-xl border border-slate-200 max-w-[90vw] sm:max-w-xl';
     } else {
-        notification_classe = 'z-50 opacity-0 -translate-x-10 transition-all duration-300 fixed top-4 left-4 pointer-events-none flex p-3 gap-3 items-center font-bold rounded-xl bg-white text-slate-800 shadow-xl border border-slate-200';
+        notification_classe = 'z-50 opacity-0 -translate-x-10 transition-all duration-300 fixed top-4 left-4 pointer-events-none flex p-3 gap-3 items-center font-bold rounded-xl bg-white text-slate-800 shadow-xl border border-slate-200 max-w-[90vw] sm:max-w-xl';
     }
 
     // Modale d'ajout
-    let contenuModale = null;
+    let modalAjout = null;
     if (affichage) {
-        contenuModale = (
+        modalAjout = (
             <div className='fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200'>
-                <div className='relative w-full max-w-lg bg-slate-800 text-white p-6 rounded-2xl shadow-2xl flex flex-col items-center text-center'>
-                    
-                    {/* Croix de fermeture */}
+                <div className='relative w-full max-w-lg bg-slate-800 text-white p-6 rounded-2xl shadow-2xl flex flex-col items-center text-center max-h-[90vh] overflow-y-auto'>
                     <button 
                         onClick={() => setAffichage(false)}
                         className='absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-full hover:bg-slate-700 transition-colors'
@@ -163,31 +207,48 @@ export const Formations_sa = () => {
                     </button>
 
                     <h1 className='font-extrabold text-2xl mb-1'>Ajouter une formation</h1>
-                    <p className='text-gray-400 mb-4 text-[0.9rem]'>Créer une nouvelle formation</p>
+                    <p className='text-gray-400 mb-4 text-sm'>Créer une nouvelle formation</p>
 
-                    <div className='w-full flex flex-col items-center'>
+                    <div className='w-full flex flex-col items-center gap-3'>
                         <input
                             type="text"
                             value={titre}
                             onChange={(e) => setTitre(e.target.value)}
-                            placeholder='Nom de la formation (ex: Développement Web)'
-                            className='border border-slate-600 bg-slate-900 w-full md:w-[80%] p-2.5 m-2 rounded-lg text-white focus:outline-none focus:border-blue-500'
+                            placeholder='Nom de la formation'
+                            className='border border-slate-600 bg-slate-900 w-full p-2.5 rounded-lg text-white focus:outline-none focus:border-blue-500 text-sm'
                         />
-                        <input
-                            type='text'
-                            value={categorie}
-                            onChange={(e) => setCategorie(e.target.value)}
-                            placeholder='Catégorie (ex: Informatique)'
-                            className='border border-slate-600 bg-slate-900 w-full md:w-[80%] p-2.5 m-2 rounded-lg text-white focus:outline-none focus:border-blue-500'
+                        
+                        <div className='w-full grid grid-cols-1 sm:grid-cols-2 gap-3'>
+                            <input
+                                type='text'
+                                value={categorie}
+                                onChange={(e) => setCategorie(e.target.value)}
+                                placeholder='Catégorie'
+                                className='border border-slate-600 bg-slate-900 w-full p-2.5 rounded-lg text-white focus:outline-none focus:border-blue-500 text-sm'
+                            />
+                            <input
+                                type='text'
+                                value={timer}
+                                onChange={(e) => setTimer(e.target.value)}
+                                placeholder='Durée / Timer (ex: 10h)'
+                                className='border border-slate-600 bg-slate-900 w-full p-2.5 rounded-lg text-white focus:outline-none focus:border-blue-500 text-sm'
+                            />
+                        </div>
+
+                        <textarea
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            placeholder='Description de la formation...'
+                            rows="3"
+                            className='border border-slate-600 bg-slate-900 w-full p-2.5 rounded-lg text-white focus:outline-none focus:border-blue-500 text-sm resize-none'
                         />
 
-                        {/* Bouton d'action */}
                         <button 
                             onClick={ajouterFormation} 
                             disabled={chargement} 
-                            className={classe}
+                            className={classeBouton}
                         >
-                            {chargement ? 'Enregistrement...' : 'Ajouter la formation'}
+                            {texteBoutonAjout}
                         </button>
                     </div>
                 </div>
@@ -195,141 +256,234 @@ export const Formations_sa = () => {
         );
     }
 
-    // Modale de détails (Voir)
-    let contenuModaleVoir = null;
-    if (affichageVoir && elementSelectionne) {
-        contenuModaleVoir = (
-            <div className='fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200'>
-                <div className='relative w-full max-w-md bg-white text-slate-800 p-6 rounded-2xl shadow-2xl flex flex-col items-start'>
-                    <button 
-                        onClick={() => setAffichageVoir(false)}
-                        className='absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors'
-                    >
-                        <FaXmark className='text-xl' />
-                    </button>
+    // Modale Voir
+    let modalVoir = null;
+    if (affichageVoir) {
+        if (elementSelectionne) {
+            let affichageTimer = 'N/A';
+            if (elementSelectionne.timer) {
+                affichageTimer = elementSelectionne.timer;
+            } else if (elementSelectionne.duree) {
+                affichageTimer = elementSelectionne.duree;
+            }
 
-                    <h1 className='font-extrabold text-2xl mb-4 text-purple-700'>Détails de la formation</h1>
-                    
-                    <div className='w-full space-y-3 text-left border-t pt-3'>
-                        <p><span className='font-bold text-slate-600'>Titre :</span> {elementSelectionne.titre}</p>
-                        <p><span className='font-bold text-slate-600'>Catégorie :</span> {elementSelectionne.categorie}</p>
-                        <p><span className='font-bold text-slate-600'>Date d'ajout :</span> {elementSelectionne.date_creation || elementSelectionne.duree || 'N/A'}</p>
-                    </div>
+            let affichageDate = 'N/A';
+            if (elementSelectionne.date) {
+                affichageDate = elementSelectionne.date;
+            } else if (elementSelectionne.date_creation) {
+                affichageDate = elementSelectionne.date_creation;
+            }
 
-                    <button 
-                        onClick={() => setAffichageVoir(false)} 
-                        className='w-full mt-6 p-2.5 bg-slate-800 text-white font-bold rounded-lg hover:bg-slate-900 transition-colors'
-                    >
-                        Fermer
-                    </button>
-                </div>
-            </div>
-        );
-    }
+            let affichageDescription = 'Aucune description disponible.';
+            if (elementSelectionne.description) {
+                affichageDescription = elementSelectionne.description;
+            }
 
-    // Modale de modification (Edit)
-    let contenuModaleEdit = null;
-    if (affichageEdit && elementSelectionne) {
-        contenuModaleEdit = (
-            <div className='fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200'>
-                <div className='relative w-full max-w-lg bg-slate-800 text-white p-6 rounded-2xl shadow-2xl flex flex-col items-center text-center'>
-                    <button 
-                        onClick={() => setAffichageEdit(false)}
-                        className='absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-full hover:bg-slate-700 transition-colors'
-                    >
-                        <FaXmark className='text-xl' />
-                    </button>
+            modalVoir = (
+                <div className='fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200'>
+                    <div className='relative w-full max-w-lg bg-white text-slate-800 p-6 rounded-2xl shadow-2xl flex flex-col items-start max-h-[90vh] overflow-y-auto'>
+                        <button 
+                            onClick={() => setAffichageVoir(false)}
+                            className='absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors'
+                        >
+                            <FaXmark className='text-xl' />
+                        </button>
 
-                    <h1 className='font-extrabold text-2xl mb-1'>Modifier la formation</h1>
-                    <p className='text-gray-400 mb-4 text-[0.9rem]'>Mettre à jour les informations</p>
-
-                    <div className='w-full flex flex-col items-center'>
-                        <input
-                            type="text"
-                            value={editTitre}
-                            onChange={(e) => setEditTitre(e.target.value)}
-                            placeholder='Nom de la formation'
-                            className='border border-slate-600 bg-slate-900 w-full md:w-[80%] p-2.5 m-2 rounded-lg text-white focus:outline-none focus:border-blue-500'
-                        />
-                        <input
-                            type='text'
-                            value={editCategorie}
-                            onChange={(e) => setEditCategorie(e.target.value)}
-                            placeholder='Catégorie'
-                            className='border border-slate-600 bg-slate-900 w-full md:w-[80%] p-2.5 m-2 rounded-lg text-white focus:outline-none focus:border-blue-500'
-                        />
+                        <h1 className='font-extrabold text-2xl mb-4 text-purple-700'>Détails de la formation</h1>
+                        
+                        <div className='w-full space-y-3 text-left border-t pt-3 text-sm'>
+                            <p><span className='font-bold text-slate-600'>Titre :</span> {elementSelectionne.titre}</p>
+                            <p><span className='font-bold text-slate-600'>Catégorie :</span> {elementSelectionne.categorie}</p>
+                            <p><span className='font-bold text-slate-600'>Durée / Timer :</span> {affichageTimer}</p>
+                            <p><span className='font-bold text-slate-600'>Date d'ajout :</span> {affichageDate}</p>
+                            <div className='border-t pt-2 mt-2'>
+                                <span className='font-bold text-slate-600 block mb-1'>Description :</span>
+                                <p className='text-slate-700 whitespace-pre-line bg-slate-50 p-2.5 rounded-lg border border-slate-100 max-h-40 overflow-y-auto'>
+                                    {affichageDescription}
+                                </p>
+                            </div>
+                        </div>
 
                         <button 
-                            onClick={enregistrerModification} 
-                            className='opacity-100 md:w-[80%] w-full border text-center items-center m-3 p-3 bg-amber-600 font-bold text-white rounded-md duration-200 cursor-pointer active:scale-95'
+                            onClick={() => setAffichageVoir(false)} 
+                            className='w-full mt-6 p-2.5 bg-slate-800 text-white font-bold rounded-lg hover:bg-slate-900 transition-colors text-sm'
                         >
-                            Enregistrer les modifications
+                            Fermer
                         </button>
                     </div>
                 </div>
-            </div>
-        );
+            );
+        }
     }
 
-    // Gestion de l'affichage de la liste sans opérateur ternaire
-    let listeFormations = null;
+    // Modale Edit
+    let modalEdit = null;
+    if (affichageEdit) {
+        if (elementSelectionne) {
+            modalEdit = (
+                <div className='fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200'>
+                    <div className='relative w-full max-w-lg bg-slate-800 text-white p-6 rounded-2xl shadow-2xl flex flex-col items-center text-center max-h-[90vh] overflow-y-auto'>
+                        <button 
+                            onClick={() => setAffichageEdit(false)}
+                            className='absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-full hover:bg-slate-700 transition-colors'
+                        >
+                            <FaXmark className='text-xl' />
+                        </button>
+
+                        <h1 className='font-extrabold text-2xl mb-1'>Modifier la formation</h1>
+                        <p className='text-gray-400 mb-4 text-sm'>Mettre à jour les informations</p>
+
+                        <div className='w-full flex flex-col items-center gap-3'>
+                            <input
+                                type="text"
+                                value={editTitre}
+                                onChange={(e) => setEditTitre(e.target.value)}
+                                placeholder='Nom de la formation'
+                                className='border border-slate-600 bg-slate-900 w-full p-2.5 rounded-lg text-white focus:outline-none focus:border-blue-500 text-sm'
+                            />
+
+                            <div className='w-full grid grid-cols-1 sm:grid-cols-2 gap-3'>
+                                <input
+                                    type='text'
+                                    value={editCategorie}
+                                    onChange={(e) => setEditCategorie(e.target.value)}
+                                    placeholder='Catégorie'
+                                    className='border border-slate-600 bg-slate-900 w-full p-2.5 rounded-lg text-white focus:outline-none focus:border-blue-500 text-sm'
+                                />
+                                <input
+                                    type='text'
+                                    value={editTimer}
+                                    onChange={(e) => setEditTimer(e.target.value)}
+                                    placeholder='Durée / Timer'
+                                    className='border border-slate-600 bg-slate-900 w-full p-2.5 rounded-lg text-white focus:outline-none focus:border-blue-500 text-sm'
+                                />
+                            </div>
+
+                            <textarea
+                                value={editDescription}
+                                onChange={(e) => setEditDescription(e.target.value)}
+                                placeholder='Description de la formation...'
+                                rows="3"
+                                className='border border-slate-600 bg-slate-900 w-full p-2.5 rounded-lg text-white focus:outline-none focus:border-blue-500 text-sm resize-none'
+                            />
+
+                            <button 
+                                onClick={enregistrerModification} 
+                                className='w-full border text-center items-center my-3 p-3 bg-amber-600 font-bold text-white rounded-md duration-200 cursor-pointer active:scale-95 hover:bg-amber-500 text-sm'
+                            >
+                                Enregistrer les modifications
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+    }
+
+    // Affichage de la liste de formations
+    let conteneurFormations = null;
     if (formations.length === 0) {
-        listeFormations = (
+        conteneurFormations = (
             <div className='p-4 text-center text-gray-500 border-b'>Aucune formation trouvée.</div>
         );
     } else {
-        listeFormations = formations.map((item, index) => (
-            <div key={item.id || index} className='p-3 rounded-md border-b border-gray-100 hover:bg-slate-50 grid grid-cols-7 items-center text-sm transition-colors'>
-                <div className='col-span-3 font-bold text-slate-900'>{item.titre}</div>
-                <div className='col-span-2 inline-block text-slate-700 px-2.5 py-1 rounded-full text-md'>
-                    {item.categorie}
+        conteneurFormations = formations.map((item, index) => {
+            let itemKey = index;
+            if (item.id) {
+                itemKey = item.id;
+            }
+
+            let itemTimer = 'N/A';
+            if (item.timer) {
+                itemTimer = item.timer;
+            } else if (item.duree) {
+                itemTimer = item.duree;
+            }
+
+            let itemDate = 'N/A';
+            if (item.date) {
+                itemDate = item.date;
+            } else if (item.date_creation) {
+                itemDate = item.date_creation;
+            }
+
+            let sousTitreMobile = item.categorie;
+            if (item.timer) {
+                sousTitreMobile = item.categorie + ' • ' + item.timer;
+            }
+
+            return (
+                <div key={itemKey} className='p-3 rounded-md border-b border-gray-100 hover:bg-slate-50 grid grid-cols-12 items-center text-sm transition-colors gap-2'>
+                    {/* Titre */}
+                    <div className='col-span-7 sm:col-span-6 xl:col-span-4 font-bold text-slate-900 pr-2 truncate'>
+                        {item.titre}
+                        <div className='block xl:hidden text-xs font-normal text-slate-500 truncate'>
+                            {sousTitreMobile}
+                        </div>
+                    </div>
+
+                    {/* Catégorie */}
+                    <div className='hidden xl:block xl:col-span-3 text-slate-700 truncate'>
+                        {item.categorie}
+                    </div>
+
+                    {/* Durée / Timer */}
+                    <div className='hidden xl:block xl:col-span-2 text-slate-600 text-xs truncate'>
+                        {itemTimer}
+                    </div>
+
+                    {/* Date */}
+                    <div className='hidden sm:block sm:col-span-3 xl:col-span-1 text-gray-500 text-xs truncate'>
+                        {itemDate}
+                    </div>
+
+                    {/* Actions */}
+                    <div className='col-span-5 sm:col-span-3 xl:col-span-2 flex items-center justify-end gap-2 sm:gap-3 text-gray-500'>
+                        <div 
+                            onClick={() => ouvrirVoir(item)} 
+                            className='cursor-pointer hover:text-blue-600 active:scale-95 transition-all p-1'
+                            title="Voir"
+                        >
+                            <FaEye />
+                        </div>
+                        <div 
+                            onClick={() => ouvrirEdit(item)} 
+                            className='cursor-pointer hover:text-amber-600 active:scale-95 transition-all p-1'
+                            title="Modifier"
+                        >
+                            <FaPenToSquare />
+                        </div>
+                        <div 
+                            onClick={() => supprimerFormation(item.id, item.titre)} 
+                            className='cursor-pointer hover:text-red-600 active:scale-95 transition-all p-1'
+                            title="Supprimer"
+                        >
+                            <FaTrash className='text-red-600' />
+                        </div>
+                    </div>
                 </div>
-                <div className='col-span-1 text-gray-500'>{item.date_creation || item.duree || 'N/A'}</div>
-                <div className='col-span-1 flex items-center justify-end gap-3 text-gray-500'>
-                    <div 
-                        onClick={() => ouvrirVoir(item)} 
-                        className='cursor-pointer hover:text-blue-600 active:scale-95 transition-all p-1'
-                        title="Voir"
-                    >
-                        <FaEye />
-                    </div>
-                    <div 
-                        onClick={() => ouvrirEdit(item)} 
-                        className='cursor-pointer hover:text-amber-600 active:scale-95 transition-all p-1'
-                        title="Modifier"
-                    >
-                        <FaPenToSquare />
-                    </div>
-                    <div 
-                        onClick={() => supprimerFormation(item.id, item.titre)} 
-                        className='cursor-pointer hover:text-red-600 active:scale-95 transition-all p-1'
-                        title="Supprimer"
-                    >
-                        <FaTrash className='text-red-600' />
-                    </div>
-                </div>
-            </div>
-        ));
+            );
+        });
     }
 
     return (
-        <main className='relative m-7 col-span-6 font-sans text-slate-800'>
+        <main className='relative m-3 sm:m-7 font-sans text-slate-800'>
 
-            {/* POP-UP DE NOTIFICATION (TOAST À GAUCHE) */}
+            {/* POP-UP DE NOTIFICATION */}
             <div className={notification_classe}>
                 {icone} {message}
             </div>
 
-            {/* MODALES D'INTERACTION */}
-            {contenuModale}
-            {contenuModaleVoir}
-            {contenuModaleEdit}
+            {/* MODALES */}
+            {modalAjout}
+            {modalVoir}
+            {modalEdit}
 
             {/* EN-TÊTE DE LA PAGE */}
-            <div className='w-full flex items-center justify-between mb-4'>
-                <div className='font-extrabold text-xl'>Formations</div>
+            <div className='w-full flex flex-row items-center justify-between gap-3 mb-4'>
+                <div className='font-extrabold text-lg sm:text-xl'>Formations</div>
                 <div
-                    className='p-2.5 bg-purple-600 hover:bg-purple-700 rounded-md text-white duration-200 active:scale-95 cursor-pointer font-medium shadow-md'
+                    className='p-2 sm:p-2.5 bg-purple-600 hover:bg-purple-700 rounded-md text-white duration-200 active:scale-95 cursor-pointer font-medium shadow-md text-xs sm:text-sm whitespace-nowrap'
                     onClick={() => setAffichage(true)}
                 >
                     + Nouvelle formation
@@ -337,15 +491,16 @@ export const Formations_sa = () => {
             </div>
 
             {/* EN-TÊTE DU TABLEAU */}
-            <div className='bg-gray-200 p-3 rounded-md mt-2 grid grid-cols-7 font-bold text-black-700 text-sm'>
-                <div className='col-span-3'>Titres</div>
-                <div className='col-span-2'>Catégories</div>
-                <div className='col-span-1'>Date d'ajout</div>
-                <div className='col-span-1 text-right pr-2'>Actions</div>
+            <div className='bg-gray-200 p-3 rounded-md mt-2 grid grid-cols-12 font-bold text-slate-700 text-xs sm:text-sm gap-2 items-center'>
+                <div className='col-span-7 sm:col-span-6 xl:col-span-4'>Titres</div>
+                <div className='hidden xl:block xl:col-span-3'>Catégories</div>
+                <div className='hidden xl:block xl:col-span-2'>Durée</div>
+                <div className='hidden sm:block sm:col-span-3 xl:col-span-1'>Date</div>
+                <div className='col-span-5 sm:col-span-3 xl:col-span-2 text-right pr-2'>Actions</div>
             </div>
 
             {/* LISTE DYNAMIQUE DES FORMATIONS */}
-            {listeFormations}
+            {conteneurFormations}
 
         </main>
     );

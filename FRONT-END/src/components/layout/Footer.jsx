@@ -1,6 +1,7 @@
 import React from 'react'
 import Logo from '../../assets/images/logo/logo.png'
-import { FaFacebook,FaInstagram,FaTwitter,FaTiktok } from 'react-icons/fa6'
+import { FaFacebook,FaEnvelope,FaTwitter,FaTiktok } from 'react-icons/fa6'
+import { FaWeebly } from 'react-icons/fa'
 import { Link } from 'react-router'
 export const Footer = () => {
   return (
@@ -10,10 +11,13 @@ export const Footer = () => {
             <img src={Logo} alt="" className='w-75 h-55 cursor-pointer active:scale-95'/>
             <p className='-mt-10 mb-3 text-white text-[0.8rem]'>PLateforme de gestion de formation <br /> et de support pedagogique en ligne</p>
             <div className='flex gap-2'>
-                <FaFacebook size={25} className='duration-200 hover:bg-blue-600 active:scale-95 hover:scale-105 text-gray-300 border border-gray-100 p-1 rounded-2xl'/>
-                <FaInstagram size={25} className='duration-200 hover:bg-blue-600 active:scale-95 hover:scale-105 text-gray-300 border border-gray-100 p-1 rounded-2xl'/>
-                <FaTwitter size={25} className='duration-200 hover:bg-blue-600 active:scale-95 hover:scale-105 text-gray-300 border border-gray-100 p-1 rounded-2xl'/>
-                <FaTiktok size={25} className='duration-200 hover:bg-blue-600 active:scale-95 hover:scale-105 text-gray-300 border border-gray-100 p-1 rounded-2xl'/>
+                <a href="https://facebook.com/" target='_blank'><FaFacebook size={25} className='duration-200 hover:bg-blue-600 active:scale-95 hover:scale-105 text-gray-300 border border-gray-100 p-1 rounded-2xl'/></a>
+                <a href="mailto:formation@imtechinfo.com">
+                  <FaEnvelope size={25} className='duration-200 hover:bg-blue-600 active:scale-95 hover:scale-105 text-gray-300 border border-gray-100 p-1 rounded-2xl'/>
+                </a>
+                <a href="https://imtechinfo.com">
+                  <FaWeebly size={25} className='duration-200 hover:bg-blue-600 active:scale-95 hover:scale-105 text-gray-300 border border-gray-100 p-1 rounded-2xl'/>
+                </a>
             </div>
         </div>
         <div className='flex gap-20'>
@@ -55,7 +59,7 @@ export const Footer = () => {
         </div>
       </div>
       <div className='bg-blue-950 text-[0.7rem] w-screen h-10 text-center text-white'>
-        <h1 className='text-center'>©️ 2024 IM TECH INFO. Tout droits réservés.</h1>
+        <h1 className='text-center'>©️ 2026 IM TECH INFO. Tout droits réservés.</h1>
       </div>
     </footer>
   )

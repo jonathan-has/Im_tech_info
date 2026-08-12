@@ -34,55 +34,45 @@ export const Supports = () => {
                         <stop offset="0%" stop-color="#070B2E"/>
                         <stop offset="100%" stop-color="#0B1448"/>
                       </linearGradient>
-
                       <linearGradient id="blue" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stop-color="#6D5BFF"/>
                         <stop offset="100%" stop-color="#2E42FF"/>
                       </linearGradient>
-
                       <radialGradient id="bubble">
                         <stop offset="0%" stop-color="#FFFFFF"/>
                         <stop offset="100%" stop-color="#E4E7FF"/>
                       </radialGradient>
-
                       <filter id="shadow">
                         <feDropShadow dx="0" dy="8" stdDeviation="10"
                         flood-color="#00000066"/>
                       </filter>
                     </defs>
-
                     <rect width="800" height="500" fill="url(#bg)"/>
-
                     {/* <!-- petits points --> */}
                     <circle cx="80" cy="120" r="5" fill="#4C68FF"/>
                     <circle cx="690" cy="90" r="6" fill="#29A9FF"/>
                     <circle cx="720" cy="350" r="5" fill="#4C68FF"/>
-
                     {/* <!-- lignes décoratives --> */}
                     <path d="M120 260 C170 180 250 180 300 250"
                           stroke="#3558FF"
                           stroke-width="2"
                           stroke-dasharray="8 8"
                           fill="none"/>
-
                     <path d="M500 250 C550 180 630 180 680 260"
                           stroke="#3558FF"
                           stroke-width="2"
                           stroke-dasharray="8 8"
                           fill="none"/>
-
                     {/* <!-- boîte email --> */}
                     <g transform="translate(70 200)">
                       <rect width="90" height="90" rx="12"
                             fill="none"
                             stroke="#5867FF"
                             stroke-width="3"/>
-
                       <path d="M20 30 L45 50 L70 30"
                             stroke="#FFFFFF"
                             stroke-width="4"
                             fill="none"/>
-
                       <rect x="20" y="30"
                             width="50"
                             height="35"
@@ -91,7 +81,6 @@ export const Supports = () => {
                             stroke="#FFFFFF"
                             stroke-width="4"/>
                     </g>
-
                     {/* <!-- boîte ? --> */}
                     <g transform="translate(640 190)">
                       <rect width="90" height="90"
@@ -99,7 +88,6 @@ export const Supports = () => {
                             fill="none"
                             stroke="#5867FF"
                             stroke-width="3"/>
-
                       <text x="45"
                             y="58"
                             font-size="48"
@@ -108,7 +96,6 @@ export const Supports = () => {
                             font-family="Arial"
                             font-weight="bold">?</text>
                     </g>
-
                     {/* <!-- casque --> */}
                     <g filter="url(#shadow)">
                       {/* <!-- arceau --> */}
@@ -118,20 +105,17 @@ export const Supports = () => {
                             stroke="url(#blue)"
                             stroke-width="20"
                             stroke-linecap="round"/>
-
                       {/* <!-- écouteurs --> */}
                       <rect x="250" y="200"
                             width="40"
                             height="110"
                             rx="20"
                             fill="url(#blue)"/>
-
                       <rect x="510" y="200"
                             width="40"
                             height="110"
                             rx="20"
                             fill="url(#blue)"/>
-
                       {/* <!-- microphone --> */}
                       <path d="M520 300
                               Q560 320 560 360"
@@ -139,12 +123,10 @@ export const Supports = () => {
                             stroke-width="10"
                             fill="none"
                             stroke-linecap="round"/>
-
                       <circle cx="560" cy="360"
                               r="9"
                               fill="#4F5DFF"/>
                     </g>
-
                     {/* <!-- bulle --> */}
                     <g filter="url(#shadow)">
                       <rect x="315"
@@ -153,15 +135,12 @@ export const Supports = () => {
                             height="110"
                             rx="55"
                             fill="url(#bubble)"/>
-
                       <polygon points="375,290 405,290 390,320"
                               fill="#EEF1FF"/>
-
                       <circle cx="365" cy="235" r="8" fill="#555"/>
                       <circle cx="400" cy="235" r="8" fill="#555"/>
                       <circle cx="435" cy="235" r="8" fill="#555"/>
                     </g>
-
                   </svg>
             </div>
           </div>    
@@ -170,7 +149,7 @@ export const Supports = () => {
       <section className='flex gap-2 flex-col'>
         <h1 className='m-2 font-bold text-2xl text-center'>Comment pouvons-nous vous aider ?</h1>
         <p className='text-gray-600 text-center text-md'>Choisissez un sujet pour retrouver une solution à votre problème.</p>
-        <div className='flex lg:flex-row flex-col items-center'>
+        <div className='flex lg:flex-row flex-col items-center justify-center'>
           <Card_supp
           style_logo="bg-blue-200 p-4 rounded-[50%]"
           logo={<FaGraduationCap size={35} className="m-1 text-blue-700 font-bold"/>}
@@ -221,7 +200,7 @@ export const Supports = () => {
       <section>
         <h1 className='m-2 font-bold text-2xl text-center'>Ressources utiles</h1>
         <p className='text-gray-600 text-center text-md'>Accéder à nos guides et documents pour vous aider.</p>
-        <div className='mt-4 flex flex-col lg:flex-row mb-2'>
+        <div className='mt-4 flex flex-col lg:flex-row mb-2 items-center justify-center'>
         <Card
           style_card="w-30 h-17 bg-blue-800 m-3 rounded-lg flex items-center justify-center"
           icone={<FaCode size={25} className='text-white cursor-pointer'/>}

@@ -1,5 +1,4 @@
 import { createBrowserRouter } from "react-router-dom";
-import App from "../App";
 import { Mainlayout } from "../layouts/Mainlayout";
 import { Authlayout } from "../layouts/Authlayout";
 import { Dashlayout } from "../layouts/DashLayout";
@@ -34,7 +33,6 @@ import {Formations_t} from '../pages/dashboard/Enseignants/Formation_t';
 import { Supports_t } from "../pages/dashboard/Enseignants/Supports_t";
 
 // Etudiants sous-pages
-import { Dashetu } from "../pages/dashboard/Etudiants/Dashetu";
 import { Formations_etu } from "../pages/dashboard/Etudiants/Formations_etu";
 import { Supports_etu } from "../pages/dashboard/Etudiants/Supports_etu";
 
@@ -153,10 +151,6 @@ export const router = createBrowserRouter([
             element: <Etudiants />,
             children: 
             [
-              {
-                path: "dashetu",
-                element: <Dashetu/>,
-              },
               {
                 path: "formations",
                 element: <Formations_etu/>,

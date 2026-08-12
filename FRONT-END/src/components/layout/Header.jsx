@@ -5,11 +5,7 @@ import { FaSearch, FaMoon, FaBars } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
 
 export const Header = () => {
-
   const [menu, setMenu] = useState(false);
-  const [search, setSearch] = useState(false);
-
-
   function burger() {
     if (menu === false) {
       setMenu(true);
@@ -17,22 +13,8 @@ export const Header = () => {
       setMenu(false);
     }
   }
-
-
-  function afficher() {
-    if (search === false) {
-      setSearch(true);
-    } else {
-      setSearch(false);
-    }
-  }
-
-
   let iconBurger;
   let menuClass;
-  let searchClass;
-
-
   if (menu === true) {
     iconBurger = <FaX size={30} />;
     menuClass = "block";
@@ -40,15 +22,6 @@ export const Header = () => {
     iconBurger = <FaBars size={30} />;
     menuClass = "hidden";
   }
-
-
-  if (search === true) {
-    searchClass = "block border rounded-xl p-2 text-white";
-  } else {
-    searchClass = "hidden";
-  }
-
-
   return (
 
     <header className="fixed top-0 w-full h-20 bg-blue-950 flex items-center justify-around z-50">
@@ -95,25 +68,6 @@ export const Header = () => {
         </Link>
 
       </nav>
-
-
-
-      <div className="hidden lg:flex items-center gap-3">
-
-        <input 
-          className={searchClass}
-          placeholder="Recherche"
-        />
-
-        <FaSearch
-          className="text-white cursor-pointer"
-          onClick={afficher}
-        />
-
-      </div>
-
-
-
       <div className="hidden lg:flex gap-2">
 
         <Link to="/Login">

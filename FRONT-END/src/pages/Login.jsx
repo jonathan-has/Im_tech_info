@@ -78,7 +78,7 @@ export const Login = () => {
                 else if (role === "enseignants"){
                     navigate('/Dashboard/Teacher/Dashteach');
                 } else if (role === "etudiants") {
-                    navigate('/Dashboard/Etudiants/Dashetu');
+                    navigate('/Dashboard/Etudiants/Formations_etu');
                 }
             }
             // apparition du pop-up

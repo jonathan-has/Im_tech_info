@@ -48,14 +48,16 @@ const FAKE_USERS = [
     nom: "Professeur Kevin",
     email: "prof@test.com",
     password: "1234",
-    role: "enseignants"
+    role: "enseignants",
+    categorie:"inforamtique"
   },
   {
     id: 3,
     nom: "Nathalia",
     email: "etudiant@test.com",
     password: "1234",
-    role: "etudiants"
+    role: "etudiants",
+    categorie:"nnformatique"
   }
 ];
 
