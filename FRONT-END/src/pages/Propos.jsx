@@ -78,13 +78,13 @@ export const Propos = () => {
         <h1 className='m-2 font-bold text-2xl text-center'>Qui sommes-nous ?</h1>
         <div className='flex gap-5 lg:flex-row flex-col m-4 items-center'>
           <div className='w-[50%] shadow-md shadow-gray-400 p-4 rounded-md'>
-            <p className='text-justify'><span className='font-bold'>IM TECH INFO </span>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores est provident iste in. Illo odio voluptates cum iusto, <br /><br /> accusantium iste tenetur, laborum sit quae officiis dolor pariatur rerum sequi? Molestiae eius repellendus officia tempore eaque, laboriosam fuga nisi eligendi iste corporis laudantium sed quae numquam ad voluptate provident aliquam qui facilis officiis.</p>
+            <p className='text-justify'><span className='font-bold'>IM TECH INFO </span>Notre Plateforme de cours en ligne a pour objctif de rendre l'apprentissage simple, accessible et efficace pour tous.<br /><br />Nous proposons des formations de qualité, d'accessibilité, conçues pour vous permettre  de développer vos compétences à votre rythme. <br /> Apprenez Progressez, Evoluez avec nous.</p>
           </div>
           <div className='w-[50%] shadow-md shadow-gray-400 rounded-lg flex items-center p-4'>
             <FaBullseye size={80} className='w-40 m-2 bg-blue-600 rounded-md p-3 text-white cursor-pointer'/>
             <div className='text-md'>
               <h1 className='font-bold'>Notre vision</h1>
-              <p className='text-[0.9rem]'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum quisquam necessitatibus deleniti praesentium animi beatae, possimus placeat ducimus eligendi ullam.</p>
+              <p className='text-[0.9rem]'>Former la future main-d'oeuvre technologique et professionnelles de Madagascar avec des compétences pratiques, innovantes et adaptées au marché.</p>
             </div>
           </div>
         </div>
@@ -100,19 +100,19 @@ export const Propos = () => {
             style_logo="bg-blue-200 p-4 rounded-[50%]"
             logo={<FaUserFriends size={35} className="m-1 text-blue-700 font-bold"/>}
             title="Accesibilité"
-            description="Nous nous engageons à fournir des contenus fiables, à jour et rigoureusement séléctionnés."
+            description="Apprenez où vous voulez, quand vous vous voulez,avec une plateforme simpl et accessible à tous."
           />
           <Card_propos
             style_logo="bg-green-200 p-4 rounded-[50%]"
             logo={<FaGem size={35} className="m-1 text-green-700 font-bold"/>}
             title="Innovation"
-            description="Nous nous engageons à fournir des contenus fiables, à jour et rigoureusement séléctionnés."
+            description="Découvrer des méthodes d'apprentissage modernes et des outils innovants pour rendre chaque cours plus intercatif."
           />
           <Card_propos
             style_logo="bg-red-200 p-4 rounded-[50%]"
             logo={<FaGem size={35} className="m-1 text-red-700 font-bold"/>}
             title="Accoompagnement"
-            description="Nous nous engageons à fournir des contenus fiables, à jour et rigoureusement séléctionnés."
+            description="Progressez à votre rythme tout en bénificint d'un accompagnement pour vous guider à chaque étape."
           />
         </div>
       </section>
@@ -138,22 +138,22 @@ export const Propos = () => {
           <div className='flex lg:flex-row flex-col items-center'>
             <Card_pers
             profil={<FaUser size={100} className="text-blue-600"/>}
-              teacher="Jonathan Junior"
+              teacher="Sebastian DeSantas"
               description="Fondateur & CEO"
             />  
             <Card_pers
               profil={<FaUser size={100} className="text-red-600"/>}
-              teacher="Jonathan Junior"
+              teacher="Sebastian DeSantas"
               description="Fondateur & CEO"
             />  
             <Card_pers
               profil={<FaUser size={100} className="text-green-600"/>}
-              teacher="Jonathan Junior"
+              teacher="Sebastian DeSantas"
               description="Fondateur & CEO"
             />  
             <Card_pers
               profil={<FaUser size={100} className="text-pink-600"/>}
-              teacher="Jonathan Junior"
+              teacher="Sebastian DeSantas"
               description="Fondateur & CEO"
             />  
           </div>

@@ -1,10 +1,4 @@
-// // ============================================================
-// // Service : liste_element.js
-// // Rôle : récupérer (GET) la liste des élèves et des supports
-// // (documents/cours) envoyés par un enseignant précis.
-// // ============================================================
-
-// // Adresse de base de l'API (à adapter si une variable d'environnement existe déjà ailleurs)
+// (GET)
 // const API_URL = "http://localhost:5000/api";
 // export const getElementsEnseignant = async (idEnseignant, token) => {
 //     try {
@@ -50,11 +44,7 @@
 
 
 // test
-// ============================================================
-// Service : liste_element.js
-// Rôle : récupérer (GET) la liste des élèves et des supports
-// (documents/cours) envoyés par un enseignant précis.
-// ============================================================
+// (GET)
 
 const API_URL = "http://localhost:5000/api";
 
@@ -73,13 +63,13 @@ const DONNEES_TEST = {
         {
             id: 101,
             titre: "Introduction à Pandas et Data Science.pdf",
-            fichier: "/file/pandas/cours_pandas.pdf",
+            fichier: "/file/pandas.pdf",
             date_envoi: "2026-08-10"
         },
         {
             id: 102,
             titre: "Exercices Pratiques - Manipulations de DataFrames.pdf",
-            fichier: "/file/pandas/exercices_pandas.pdf",
+            fichier:"/file/pandas.pdf",
             date_envoi: "2026-08-11"
         }
     ]

@@ -52,30 +52,6 @@ export const Formations_t = () => {
         chargerFormations();
     }, []);
 
-    // Fonction d'ajout avec génération automatique de la date
-    const ajouterFormation = async () => {
-        if (!titre || !categorie) {
-            afficherNotification("Veuillez remplir le titre et la catégorie !", false);
-        } else {
-            setChargement(true);
-            const token = localStorage.getItem('token');
-            
-            const dateAutomatique = new Date().toISOString().split('T')[0];
-            const res = await postformations(titre, categorie, dateAutomatique, token);
-
-            if (res && res.success) {
-                afficherNotification(res.message || "Formation créée avec succès !", true);
-                setTitre('');
-                setCategorie('');
-                setAffichage(false);
-                chargerFormations();
-            } else {
-                afficherNotification((res && res.message) || "Erreur lors de la création.", false);
-            }
-
-            setChargement(false);
-        }
-    };
 
     // ACTION : Ouvrir les détails et récupérer dynamiquement les élèves & supports via API
     const ouvrirVoir = async (item) => {
@@ -341,7 +317,7 @@ export const Formations_t = () => {
                 <div className='col-span-4 sm:col-span-3 md:col-span-1 flex items-center justify-end text-gray-500 pr-1'>
                     <button 
                         onClick={() => ouvrirVoir(item)} 
-                        className='cursor-pointer text-slate-900 hover:text-blue-600 hover:bg-blue-50 active:scale-95 transition-all p-2 rounded-full flex items-center gap-1 font-medium'
+                        className='cursor-pointer text-gray-500 hover:text-blue-600 hover:bg-blue-50 active:scale-95 transition-all p-2 rounded-full flex items-center gap-1 font-medium'
                         title="Voir tout"
                     >
                         <FaEye className='text-base sm:text-lg' />
@@ -368,12 +344,6 @@ export const Formations_t = () => {
             {/* EN-TÊTE DE LA PAGE */}
             <div className='w-full flex flex-row items-center justify-between mb-4 gap-2'>
                 <h1 className='font-extrabold text-lg sm:text-xl text-slate-900 truncate'>Mes Formations</h1>
-                <button
-                    className='p-2 sm:p-2.5 bg-purple-600 hover:bg-purple-700 rounded-md text-white duration-200 active:scale-95 cursor-pointer font-medium shadow-md text-xs sm:text-sm shrink-0'
-                    onClick={() => setAffichage(true)}
-                >
-                    + Nouvelle formation
-                </button>
             </div>
 
             {/* EN-TÊTE DU TABLEAU */}

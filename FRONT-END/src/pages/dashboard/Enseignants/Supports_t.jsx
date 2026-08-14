@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import {FaEye,FaCheck,FaX,FaXmark} from "react-icons/fa6";
-import {telecharger_fichier,getSupport,postfile,deletSupport} from "../../../services/Dashboard/teacher/teachersupports";
+import { FaEye, FaCheck, FaX, FaXmark } from "react-icons/fa6";
+import { telecharger_fichier, getSupport, postfile, deletSupport } from "../../../services/Dashboard/teacher/teachersupports";
+
 export const Supports_t = () => {
     // Liste des supports
     const [support, setSupport] = useState([]);
@@ -38,22 +39,20 @@ export const Supports_t = () => {
     };
 
     // CHARGER LES SUPPORTS
-
     const chargerSupport = async () => {
         const token = localStorage.getItem("token");
         try {
             const res = await getSupport(token);
             setSupport(res || []);
         } catch (error) {
-
             console.error("Erreur chargement :", error);
-
             afficherNotification(
                 "Erreur lors du chargement des supports",
                 false
             );
         }
     };
+
     useEffect(() => {
         chargerSupport();
     }, []);
@@ -72,15 +71,12 @@ export const Supports_t = () => {
                     `Support "${nomSupport}" supprimé !`,
                     true
                 );
-
             } else {
-
                 afficherNotification(
                     "Erreur lors de la suppression !",
                     false
                 );
             }
-
         } catch (error) {
             console.error("Erreur suppression :", error);
             afficherNotification(
@@ -92,28 +88,21 @@ export const Supports_t = () => {
 
     // OUVRIR LES DÉTAILS
     const ouvrirVoir = (item) => {
-
         setElementSelectionne(item);
         setAffichageVoir(true);
     };
 
     // OUVRIR LA MODALE D'INSERTION
-
     const ouvrirInserer = () => {
-
         setFichierSelectionne(null);
         setSupport_name("");
         setCategories("");
-
         setAffichageInserer(true);
     };
 
     // CHOISIR LE FICHIER
-
     const choisirFichier = (event) => {
-
         const fichier = event.target.files[0];
-
         if (fichier) {
             setFichierSelectionne(fichier);
         }
@@ -126,7 +115,6 @@ export const Supports_t = () => {
                 "Veuillez sélectionner un fichier !",
                 false
             );
-
             return;
         }
 
@@ -135,9 +123,9 @@ export const Supports_t = () => {
                 "Veuillez entrer le nom du support !",
                 false
             );
-
             return;
         }
+
         const token = localStorage.getItem("token");
         try {
             const res = await postfile(
@@ -181,10 +169,8 @@ export const Supports_t = () => {
         try {
             let fileName;
             if (elementSelectionne.titre) {
-                fileName =
-                    elementSelectionne.titre + ".pdf";
+                fileName = elementSelectionne.titre + ".pdf";
             } else {
-
                 fileName = "support.pdf";
             }
             await telecharger_fichier(
@@ -202,24 +188,23 @@ export const Supports_t = () => {
                 false
             );
         } finally {
-
             setLoading(false);
         }
     };
+
     // BOUTON TÉLÉCHARGEMENT
     let classeTelechargement;
     let textbouton;
     if (loading) {
         classeTelechargement =
             "opacity-50 pointer-events-none w-full mt-6 p-2.5 bg-slate-800 text-white font-bold rounded-lg";
-
         textbouton = "Téléchargement...";
     } else {
         classeTelechargement =
             "w-full mt-6 p-2.5 bg-slate-800 text-white font-bold rounded-lg hover:bg-slate-900 transition-colors cursor-pointer active:scale-95";
-
         textbouton = "Télécharger le fichier";
     }
+
     // ICÔNE NOTIFICATION
     let icone;
     if (success) {
@@ -268,17 +253,14 @@ export const Supports_t = () => {
                             <span className="font-bold text-slate-600">
                                 Nom du support :
                             </span>{" "}
-                            {elementSelectionne.titre ||
-                                elementSelectionne.nom}
+                            {elementSelectionne.titre || elementSelectionne.nom}
                         </p>
                         <p>
                             <span className="font-bold text-slate-600">
                                 Type :
                             </span>{" "}
-                            {elementSelectionne.categorie ||
-                                elementSelectionne.role}
+                            {elementSelectionne.categorie || elementSelectionne.role}
                         </p>
-
                         <p>
                             <span className="font-bold text-slate-600">
                                 Date d'ajout :
@@ -304,11 +286,8 @@ export const Supports_t = () => {
     let contenuModaleInserer = null;
     if (affichageInserer) {
         contenuModaleInserer = (
-
-            <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blu-sm p-4">
-
+            <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
                 <div className="relative w-full max-w-lg bg-slate-800 text-white p-6 rounded-2xl shadow-2xl">
-
                     <button
                         onClick={() => setAffichageInserer(false)}
                         className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-full hover:bg-slate-700"
@@ -325,15 +304,12 @@ export const Supports_t = () => {
                     </p>
 
                     <div className="w-full flex flex-col items-center">
-
                         {/* NOM */}
                         <input
                             type="text"
                             placeholder="Nom du support"
                             value={support_name}
-                            onChange={(e) =>
-                                setSupport_name(e.target.value)
-                            }
+                            onChange={(e) => setSupport_name(e.target.value)}
                             className="border border-slate-600 bg-slate-900 w-full md:w-[80%] p-2.5 m-2 rounded-lg text-white"
                         />
                         {/* CATÉGORIE */}
@@ -341,9 +317,7 @@ export const Supports_t = () => {
                             type="text"
                             placeholder="Catégorie"
                             value={categorie}
-                            onChange={(e) =>
-                                setCategories(e.target.value)
-                            }
+                            onChange={(e) => setCategories(e.target.value)}
                             className="border border-slate-600 bg-slate-900 w-full md:w-[80%] p-2.5 m-2 rounded-lg text-white"
                         />
                         {/* FICHIER */}
@@ -362,13 +336,12 @@ export const Supports_t = () => {
                                 <p className="text-gray-400 text-sm mt-1">
                                     {fichierSelectionne.name}
                                 </p>
-
                             </div>
                         )}
                         {/* BOUTON */}
                         <button
                             onClick={insererFichier}
-                            className="md:w-[80%] w-full m-3 p-3 bg-blue-900 font-bold text-white rounded-md active:scale-95"
+                            className="md:w-[80%] w-full m-3 p-3 bg-blue-900 font-bold text-white rounded-md active:scale-95 cursor-pointer"
                         >
                             Insérer le support
                         </button>
@@ -386,56 +359,48 @@ export const Supports_t = () => {
                 Aucun support trouvé.
             </div>
         );
-
     } else {
         listeSupports = support.map((item, index) => (
-
             <div
                 key={item.id || index}
-                className="p-3 rounded-md border-b border-gray-100 hover:bg-slate-50 grid grid-cols-7 items-center text-sm"
+                className="p-3 rounded-md border-b border-gray-100 hover:bg-slate-50 grid grid-cols-7 items-center text-sm transition-colors"
             >
-
-                <div className="col-span-3 font-bold text-slate-900">
+                {/* Nom du support : prend 5 colonnes sur mobile/tablette, 3 colonnes sur PC */}
+                <div className="col-span-5 lg:col-span-3 font-bold text-slate-900 truncate pr-2">
                     {item.titre || item.nom}
                 </div>
 
-                <div className="col-span-2 text-slate-700">
+                {/* Masqué sur Mobile et Tablette (< lg), affiché uniquement sur PC (lg:) */}
+                <div className="hidden lg:block lg:col-span-2 text-slate-700 truncate pr-2">
                     {item.categorie || item.role}
                 </div>
 
-                <div className="col-span-1 text-gray-500">
-                    {item.date_creation ||
-                        item.duree ||
-                        "N/A"}
+                {/* Masqué sur Mobile et Tablette (< lg), affiché uniquement sur PC (lg:) */}
+                <div className="hidden lg:block lg:col-span-1 text-gray-500">
+                    {item.date_creation || item.duree || "N/A"}
                 </div>
 
-                <div className="col-span-1 flex items-center justify-end gap-3">
-
+                {/* Actions : prend 2 colonnes sur mobile/tablette, 1 colonne sur PC */}
+                <div className="col-span-2 lg:col-span-1 flex items-center justify-end gap-3 text-gray-500 pr-2">
                     {/* VOIR */}
-
                     <div
                         onClick={() => ouvrirVoir(item)}
-                        className="cursor-pointer hover:text-blue-600 active:scale-95 p-1"
+                        className="cursor-pointer hover:text-blue-600 active:scale-95 p-1 transition-all"
                         title="Voir"
                     >
                         <FaEye />
                     </div>
 
                     {/* SUPPRIMER */}
-
-
                 </div>
-
             </div>
         ));
     }
 
     // RETURN
     return (
-
         <main className="relative m-7 col-span-6 font-sans text-slate-800">
             {/* NOTIFICATION */}
-
             <div className={notification_classe}>
                 {icone}
                 {message}
@@ -451,27 +416,29 @@ export const Supports_t = () => {
                     Mes Supports
                 </div>
                 <div
-                    className="p-2.5 bg-purple-600 hover:bg-purple-700 rounded-md text-white cursor-pointer font-medium shadow-md"
+                    className="p-2.5 bg-purple-600 hover:bg-purple-700 rounded-md text-white cursor-pointer font-medium shadow-md transition-colors"
                     onClick={ouvrirInserer}
                 >
                     + Insérer un support
                 </div>
             </div>
+
             {/* TABLEAU */}
-            <div className="bg-gray-200 p-3 rounded-md mt-2 grid grid-cols-7 font-bold text-sm">
-                <div className="col-span-3">
+            <div className="bg-gray-200 p-3 rounded-md mt-2 grid grid-cols-7 font-bold text-black-700 text-sm">
+                <div className="col-span-5 lg:col-span-3">
                     Noms du supports
                 </div>
-                <div className="col-span-2">
+                <div className="hidden lg:block lg:col-span-2">
                     Types de formations
                 </div>
-                <div className="col-span-1">
+                <div className="hidden lg:block lg:col-span-1">
                     Date d'ajout
                 </div>
-                <div className="col-span-1 text-right pr-2">
+                <div className="col-span-2 lg:col-span-1 text-right pr-2">
                     Actions
                 </div>
             </div>
+
             {/* LISTE */}
             {listeSupports}
         </main>

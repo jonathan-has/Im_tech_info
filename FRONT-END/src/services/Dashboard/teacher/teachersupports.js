@@ -1,88 +1,36 @@
-// 1. DOWNLOAD
+const URL_BASE = 'http://localhost:3000'; // Remplacez par votre URL de base (ex: http://localhost:8000)
+const teacher = localStorage.getItem('nom');
 
-// export const telecharger_fichier = async (id, fileName = 'fichier') => {
-//     try {
-//         const token = localStorage.getItem('token');
-
-//         const reponse = await fetch(
-//             `http://localhost:3000/supports/${id}/download`,
-//             {
-//                 method: 'GET',
-//                 headers: {
-//                     Authorization: `Bearer ${token}`,
-//                 },
-//             }
-//         );
-
-//         if (!reponse.ok) {
-//             throw new Error(
-//                 `Erreur lors du téléchargement (${reponse.status})`
-//             );
-//         }
-
-//         const blob = await reponse.blob();
-
-//         const url = URL.createObjectURL(blob);
-//         const link = document.createElement('a');
-
-//         link.href = url;
-//         link.download = fileName;
-
-//         document.body.appendChild(link);
-//         link.click();
-//         link.remove();
-
-//         URL.revokeObjectURL(url);
-
-//     } catch (error) {
-//         console.error('Erreur téléchargement :', error);
-//         throw error;
-//     }
-// };
-
-// 2. DELETE
-// export const deletSupport = async (id, token) => {
-//     const token = localStorage.getItem('token');
-//     const reponse = await fetch(
-//         `http://localhost:3000/supports/${id}`,
-//         {
-//             method: 'DELETE',
-//             headers: {
-//                 Authorization: `Bearer ${token}`
-//             }
-//         }
-//     );
-
-//     if (!reponse.ok) {
-//         throw new Error(
-//             `Erreur lors de la suppression (${reponse.status})`
-//         );
-//     }
-
-//     const data = await reponse.json();
-
-//     return data;
-// };
-
-
-// 3.POST
-export const postfile = async (support_name, categorie, fichier, token) => {
+// 1. POST FILE (Production)
+export const postfile = async (support_name, categorie, fichier, teacher, token) => {
     try {
         const formData = new FormData();
         formData.append('support_name', support_name);
         formData.append('categorie', categorie);
         formData.append('fichier', fichier);
-        const reponse = await fetch(`${URL}/Dashboard/Teacher/Supports`, {
+        formData.append('enseignant', teacher);
+
+        const reponse = await fetch(`${URL_BASE}/Dashboard/Teacher/Supports`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`
             },
             body: formData
         });
+
         const data = await reponse.json();
+
+        if (!reponse.ok) {
+            return {
+                success: false,
+                message: data.message || `Erreur serveur (${reponse.status})`,
+                data: null
+            };
+        }
+
         return {
-            success: data.success,
-            message: data.message,
+            success: data.success ?? true,
+            message: data.message || 'Fichier envoyé avec succès',
             data: data
         };
     } catch (err) {
@@ -93,8 +41,7 @@ export const postfile = async (support_name, categorie, fichier, token) => {
     }
 };
 
-
-// test
+// 2. GET SUPPORTS (Mock Test)
 export const getSupport = async (token) => {
     return Promise.resolve([
         {
@@ -102,30 +49,22 @@ export const getSupport = async (token) => {
             titre: "Cours Pandas (Python)",
             categorie: "Informatique",
             date_creation: "2026-05-10",
-            fichier: "/file/pandas.pdf"
+            fichier: "/file/pandas.pdf",
         }
     ]);
 };
 
-
-// Téléchargement pour le test
-export const telecharger_fichier = async (
-    fichier,
-    fileName = "pandas.pdf"
-) => {
+// 3. DOWNLOAD (Mock Test)
+export const telecharger_fichier = async (fichier, fileName = "pandas.pdf") => {
     try {
         const reponse = await fetch(fichier);
 
         if (!reponse.ok) {
-            throw new Error(
-                `Erreur lors du téléchargement (${reponse.status})`
-            );
+            throw new Error(`Erreur lors du téléchargement (${reponse.status})`);
         }
 
         const blob = await reponse.blob();
-
         const url = URL.createObjectURL(blob);
-
         const link = document.createElement("a");
 
         link.href = url;
@@ -136,12 +75,13 @@ export const telecharger_fichier = async (
         link.remove();
 
         URL.revokeObjectURL(url);
-
     } catch (error) {
+        console.error('Erreur téléchargement :', error);
         throw error;
     }
 };
-// API DELETE TEST
+
+// 4. DELETE (Mock Test)
 export const deletSupport = async (id, token) => {
     return Promise.resolve({
         success: true,

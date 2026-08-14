@@ -21,6 +21,39 @@ export const Supports_sa = () => {
     const [message, setMessage] = useState("");
     const [success, setSuccess] = useState(true);
 
+    // RECUPERATION DE L'USER ET DU ROLE
+    const userData = localStorage.getItem('user');
+    const roleDirect = localStorage.getItem('role');
+
+    let user_role = "";
+
+    if (userData) {
+        const user = JSON.parse(userData);
+        if (user && user.role) {
+            user_role = user.role;
+        }
+    } else if (roleDirect) {
+        user_role = roleDirect;
+    }
+
+    let role = "";
+
+    if (user_role === "RH" || user_role === "rh") {
+        role = "RH";
+    } else if (user_role === "Superadmin" || user_role === "superadmin") {
+        role = "Superadmin";
+    }
+
+    // Gestion de l'affichage du bouton de suppression selon le rôle
+    let style = {};
+    if (role === "Superadmin") {
+        style = 'cursor-pointer hover:text-red-600 active:scale-95 transition-all p-1.5 hidden';
+    }
+    else if (role === "RH") {
+        style = 'cursor-pointer hover:text-red-600 active:scale-95 transition-all p-1.5';
+    }
+
+
     // Fonction pour afficher une notification
     const afficherNotification = (msg, estSucces) => {
         setMessage(msg);
@@ -106,9 +139,12 @@ export const Supports_sa = () => {
             let fileName;
             if (elementSelectionne.titre) {
                 fileName = elementSelectionne.titre + ".pdf";
+            } else if (elementSelectionne.nom) {
+                fileName = elementSelectionne.nom + ".pdf";
             } else {
                 fileName = "support.pdf";
             }
+
             await telecharger_fichier(
                 elementSelectionne.fichier,
                 fileName
@@ -127,20 +163,62 @@ export const Supports_sa = () => {
         }
     };
 
-    // Icône de notification
-    const icone = success ? (
-        <FaCheck size={18} className="border-2 rounded-full text-green-600 border-green-600 p-0.5 shrink-0" />
-    ) : (
-        <FaX size={18} className="border-2 rounded-full text-red-600 border-red-600 p-0.5 shrink-0" />
-    );
+    // Fonctions d'extraction des données
+    const getTitreSupport = (item) => {
+        if (!item) return 'Sans titre';
+        if (item.titre) return item.titre;
+        if (item.nom) return item.nom;
+        return 'Sans titre';
+    };
 
-    // Classe de notification responsive
-    const notification_classe = `z-50 transition-all duration-300 fixed top-4 right-4 sm:right-auto sm:left-4 max-w-[90vw] sm:max-w-md flex p-3 gap-3 items-center font-semibold text-sm sm:text-base rounded-xl bg-white text-slate-800 shadow-xl border border-slate-200 ${
-        visible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'
-    }`;
+    const getNomEnseignant = (item) => {
+        if (!item) return 'Non renseigné';
+        if (item.nom) return item.nom;
+        return 'Florian';
+    };
+
+    const getTypeFormation = (item) => {
+        if (!item) return 'Non renseigné';
+        if (item.categorie) return item.categorie;
+        if (item.role) return item.role;
+        return 'Non renseigné';
+    };
+
+    const getDateAjout = (item) => {
+        if (!item) return 'N/A';
+        if (item.date_creation) return item.date_creation;
+        return 'N/A';
+    };
+
+    // Icône de notification
+    let icone = null;
+    if (success) {
+        icone = (
+            <FaCheck size={18} className="border-2 rounded-full text-green-600 border-green-600 p-0.5 shrink-0" />
+        );
+    } else {
+        icone = (
+            <FaX size={18} className="border-2 rounded-full text-red-600 border-red-600 p-0.5 shrink-0" />
+        );
+    }
+
+    // Classe de notification
+    let visibiliteClasse = '';
+    if (visible) {
+        visibiliteClasse = 'opacity-100 translate-y-0';
+    } else {
+        visibiliteClasse = 'opacity-0 -translate-y-4 pointer-events-none';
+    }
+
+    const notification_classe = `z-50 transition-all duration-300 fixed top-4 right-4 sm:right-auto sm:left-4 max-w-[90vw] sm:max-w-md flex p-3 gap-3 items-center font-semibold text-sm sm:text-base rounded-xl bg-white text-slate-800 shadow-xl border border-slate-200 ${visibiliteClasse}`;
 
     // Texte du bouton
-    const textbouton = loading ? "Téléchargement..." : "Télécharger le fichier";
+    let textbouton = '';
+    if (loading) {
+        textbouton = "Téléchargement...";
+    } else {
+        textbouton = "Télécharger le fichier";
+    }
 
     // Modale de détails
     let contenuModaleVoir = null;
@@ -163,17 +241,22 @@ export const Supports_sa = () => {
                     <div className='w-full space-y-3 text-left border-t border-slate-100 pt-4 text-sm sm:text-base'>
                         <p>
                             <span className='font-bold text-slate-600'>Nom du support : </span>
-                            {elementSelectionne.titre || elementSelectionne.nom}
+                            {getTitreSupport(elementSelectionne)}
+                        </p>
+
+                        <p>
+                            <span className='font-bold text-slate-600'>Enseignant : </span>
+                            {getNomEnseignant(elementSelectionne)}
                         </p>
 
                         <p>
                             <span className='font-bold text-slate-600'>Type : </span>
-                            {elementSelectionne.categorie || elementSelectionne.role}
+                            {getTypeFormation(elementSelectionne)}
                         </p>
 
                         <p>
                             <span className='font-bold text-slate-600'>Date d'ajout : </span>
-                            {elementSelectionne.date_creation || elementSelectionne.duree || 'N/A'}
+                            {getDateAjout(elementSelectionne)}
                         </p>
                     </div>
 
@@ -199,54 +282,66 @@ export const Supports_sa = () => {
         );
     } else {
         listeSupports = (
-            <div className="divide-y divide-gray-100 bg-white rounded-b-md border border-t-0 border-gray-100 shadow-sm">
-                {support.map((item, index) => (
-                    <div 
-                        key={item.id || index} 
-                        className='p-4 hover:bg-slate-50 flex flex-col md:grid md:grid-cols-7 items-start md:items-center gap-3 md:gap-0 text-sm transition-colors'
-                    >
-                        {/* Titre */}
-                        <div className='md:col-span-3 font-bold text-slate-900 w-full pr-2'>
-                            {item.titre || item.nom}
-                        </div>
+            <div className="bg-white rounded-b-md border border-t-0 border-gray-100 divide-y divide-slate-100">
+                {support.map((item, index) => {
+                    let keyId = item.id;
+                    if (!keyId) {
+                        keyId = index;
+                    }
 
-                        {/* Catégorie / Type */}
-                        <div className='md:col-span-2 w-full md:w-auto text-xs sm:text-sm text-slate-700'>
-                            {item.categorie || item.role}
-                        </div>
+                    return (
+                        <div 
+                            key={keyId} 
+                            className='p-4 hover:bg-slate-50 flex items-center justify-between lg:grid lg:grid-cols-8 gap-2 text-sm transition-colors'
+                        >
+                            {/* Titre (Toujours visible) */}
+                            <div className='lg:col-span-3 font-bold text-slate-900 truncate pr-2'>
+                                {getTitreSupport(item)}
+                            </div>
 
-                        {/* Date */}
-                        <div className='md:col-span-1 w-full md:w-auto flex items-center justify-between md:justify-start text-xs sm:text-sm text-gray-500'>
-                            {item.date_creation || item.duree || 'N/A'}
-                        </div>
+                            {/* Enseignant (Caché sur Mobile & Tablette, visible sur Laptop/Desktop lg:) */}
+                            <div className='hidden lg:block lg:col-span-2 text-sm font-semibold text-slate-800 truncate'>
+                                {getNomEnseignant(item)}
+                            </div>
 
-                        {/* Actions */}
-                        <div className='md:col-span-1 w-full md:w-auto flex items-center justify-end gap-4 text-gray-500 pt-2 md:pt-0 border-t md:border-t-0 border-gray-100'>
-                            <button 
-                                onClick={() => ouvrirVoir(item)} 
-                                className='cursor-pointer hover:text-blue-600 active:scale-95 transition-all p-1.5 rounded-lg hover:bg-blue-50' 
-                                title="Voir"
-                                aria-label="Voir le support"
-                            >
-                                <FaEye className="text-base" />
-                            </button>
+                            {/* Catégorie / Type (Caché sur Mobile & Tablette, visible sur lg:) */}
+                            <div className='hidden lg:block lg:col-span-1 text-sm text-slate-700 truncate'>
+                                {getTypeFormation(item)}
+                            </div>
 
-                            <button
-                                onClick={() =>
-                                    supprimerSupports(
-                                        item.id,
-                                        item.titre || item.nom
-                                    )
-                                }
-                                className='cursor-pointer hover:text-red-600 active:scale-95 transition-all p-1.5 rounded-lg hover:bg-red-50'
-                                title="Supprimer"
-                                aria-label="Supprimer le support"
-                            >
-                                <FaTrash className='text-red-600 text-base' />
-                            </button>
+                            {/* Date (Cachée sur Mobile & Tablette, visible sur lg:) */}
+                            <div className='hidden lg:flex lg:col-span-1 items-center text-sm text-gray-500'>
+                                {getDateAjout(item)}
+                            </div>
+
+                            {/* Actions (Toujours visible) */}
+                            <div className='lg:col-span-1 flex items-center justify-end gap-2 sm:gap-4 text-gray-500 shrink-0'>
+                                <button 
+                                    onClick={() => ouvrirVoir(item)} 
+                                    className='cursor-pointer hover:text-blue-600 active:scale-95 transition-all p-1.5 rounded-lg hover:bg-blue-50' 
+                                    title="Voir"
+                                    aria-label="Voir le support"
+                                >
+                                    <FaEye className="text-base" />
+                                </button>
+
+                                <button
+                                    onClick={() =>
+                                        supprimerSupports(
+                                            item.id,
+                                            getTitreSupport(item)
+                                        )
+                                    }
+                                    className={style}
+                                    title="Supprimer"
+                                    aria-label="Supprimer le support"
+                                >
+                                    <FaTrash className='text-red-600 text-base' />
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
         );
     }
@@ -271,19 +366,19 @@ export const Supports_sa = () => {
             </div>
 
             {/* EN-TÊTE DU TABLEAU */}
-            <div className='hidden md:grid bg-gray-200 p-3 rounded-t-md grid-cols-7 font-bold text-slate-700 text-sm'>
-                <div className='col-span-3'>
-                    Noms du support
-                </div>
-                <div className='col-span-2'>
-                    Types de formations
-                </div>
-                <div className='col-span-1'>
-                    Date d'ajout
-                </div>
-                <div className='col-span-1 text-right pr-2'>
-                    Actions
-                </div>
+            {/* Version Mobile & Tablette (< lg) */}
+            <div className='flex lg:hidden bg-gray-200 p-3 rounded-t-md items-center justify-between font-bold text-slate-700 text-sm'>
+                <div>Noms du support</div>
+                <div>Actions</div>
+            </div>
+
+            {/* Version Ordinateur (>= lg) */}
+            <div className='hidden lg:grid bg-gray-200 p-3 rounded-t-md grid-cols-8 font-bold text-slate-700 text-sm'>
+                <div className='col-span-3'>Noms du support</div>
+                <div className='col-span-2'>Enseignant</div>
+                <div className='col-span-1'>Types de formations</div>
+                <div className='col-span-1'>Date d'ajout</div>
+                <div className='col-span-1 text-right pr-2'>Actions</div>
             </div>
 
             {/* LISTE */}

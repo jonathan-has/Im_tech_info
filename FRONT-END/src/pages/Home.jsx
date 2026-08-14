@@ -71,9 +71,9 @@ export const Home = () => {
         }
         return (
           <Card
+          key={item.id}                                                                                                                                                                                                        
           formation={item.titre}
           description={item.description}  
-          key={item.key}                                                                                                                                                                                                        
         />
         )
       });

@@ -23,7 +23,7 @@ export const Supports = () => {
               <p className='m-5 text-gray-400'>Notre équipe de support est disponible pour répondre <br />à toutes vos questions et vous accompagner</p>
             </div>
             <div className='m-4 flex items-center gap-6'>
-              <button className='m-3 flex items-center gap-2 bg-[#122ac7b1] p-3 w-60 text-center text-white rounded-md font-bold cursor-pointer hover:-translate-y-1 active:scale-95'><FaHeadphones size={20} className='text-white cursor-pointer'/>Nous contacter</button>
+              <Link to="/Contact"><button className='m-3 flex items-center gap-2 bg-[#122ac7b1] p-3 w-60 text-center text-white rounded-md font-bold cursor-pointer hover:-translate-y-1 active:scale-95'><FaHeadphones size={20} className='text-white cursor-pointer'/>Nous contacter</button></Link>
             </div>
           </div>
           <div className='md:block hidden'>

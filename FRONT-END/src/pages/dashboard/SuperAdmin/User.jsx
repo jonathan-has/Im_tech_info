@@ -78,6 +78,39 @@ export const User = () => {
         notification_classe = 'z-50 opacity-0 -translate-x-10 transition-all duration-300 fixed top-4 left-4 pointer-events-none flex p-3 gap-3 items-center font-bold rounded-xl bg-white text-slate-800 shadow-xl border border-slate-200';
     }
 
+
+    // RECUPERATION DE L'USER ET DU ROLE
+    const userData = localStorage.getItem('user');
+    const roleDirect = localStorage.getItem('role');
+
+    let user_role = "";
+
+    if (userData) {
+        const user = JSON.parse(userData);
+        if (user && user.role) {
+            user_role = user.role;
+        }
+    } else if (roleDirect) {
+        user_role = roleDirect;
+    }
+
+    let role = "";
+
+    if (user_role === "RH" || user_role === "rh") {
+        role = "RH";
+    } else if (user_role === "Superadmin" || user_role === "superadmin") {
+        role = "Superadmin";
+    }
+
+    // Gestion de l'affichage du bouton de suppression selon le rôle
+    let style = {};
+    if (role === "Superadmin") {
+        style = 'cursor-pointer hover:text-red-600 active:scale-95 transition-all p-1.5 hidden';
+    }
+    else if (role === "RH") {
+        style = 'cursor-pointer hover:text-red-600 active:scale-95 transition-all p-1.5';
+    }
+
     // Modale de détails (Voir)
     let contenuModaleVoir = null;
     if (affichageVoir && elementSelectionne) {
@@ -119,12 +152,19 @@ export const User = () => {
     } else {
         listeUsers = users.map((item, index) => (
             <div key={item.id || index} className='p-3 rounded-md border-b border-gray-100 hover:bg-slate-50 grid grid-cols-7 items-center text-sm transition-colors'>
-                <div className='md:col-span-3 col-span-5 font-bold text-slate-900'>{item.titre || item.nom}</div>
-                <div className='hidden md:block text-xs font-normal text-slate-500 truncate'>
-                    {item.categorie ||item.role}
+                {/* Visible sur mobile/tablette (5 col) et PC (3 col) */}
+                <div className='lg:col-span-3 col-span-5 font-bold text-slate-900'>{item.titre || item.nom}</div>
+                
+                {/* Visible seulement sur PC (lg:) */}
+                <div className='hidden lg:block lg:col-span-2 text-xs font-normal text-slate-500 truncate'>
+                    {item.categorie || item.role}
                 </div>
-                <div className='md:col-span-1 hidden md:block text-gray-500'>{item.date_creation || item.duree || 'N/A'}</div>
-                <div className='col-span-1 flex items-center justify-end gap-3 text-gray-500'>
+                
+                {/* Visible seulement sur PC (lg:) */}
+                <div className='lg:col-span-1 hidden lg:block text-gray-500'>{item.date_creation || item.duree || 'N/A'}</div>
+                
+                {/* Visible sur tous les écrans */}
+                <div className='col-span-2 lg:col-span-1 flex items-center justify-end gap-3 text-gray-500'>
                     <div 
                         onClick={() => ouvrirVoir(item)} 
                         className='cursor-pointer hover:text-blue-600 active:scale-95 transition-all p-1'
@@ -134,10 +174,10 @@ export const User = () => {
                     </div>
                     <div 
                         onClick={() => supprimerUtilisateur(item.id, item.titre || item.nom)} 
-                        className='cursor-pointer hover:text-red-600 active:scale-95 transition-all p-1'
+                        className={style}
                         title="Supprimer"
                     >
-                        <FaTrash className='text-red-600' />
+                        <FaTrash className='text-red-600 ' />
                     </div>
                 </div>
             </div>
@@ -157,15 +197,15 @@ export const User = () => {
 
             {/* EN-TÊTE DE LA PAGE */}
             <div className='w-full flex items-center justify-between mb-4'>
-                <div className='font-extrabold text-xl'>Utilisateurs</div>
+                <div className='font-extrabold text-xl'>Etudiants</div>
             </div>
 
-            {/* EN-TÊTE DU TABLEAU / LISTE */}
+            {/* EN-TÊTE DU TABLEAU / LISTE (Adapté Mobile/Tablette avec lg:) */}
             <div className='bg-gray-200 p-3 rounded-md mt-2 grid grid-cols-7 font-bold text-black-700 text-sm'>
-                <div className='md:col-span-3 col-span-5'>Noms</div>
-                <div className='md:col-span-2 hidden md:block'>Rôles / Catégories</div>
-                <div className='md:col-span-1 hidden md:block'>Date d'ajout</div>
-                <div className='col-span-1 text-right pr-2'>Actions</div>
+                <div className='lg:col-span-3 col-span-5'>Noms</div>
+                <div className='lg:col-span-2 hidden lg:block'>Rôles / Catégories</div>
+                <div className='lg:col-span-1 hidden lg:block'>Date d'ajout</div>
+                <div className='col-span-2 lg:col-span-1 text-right pr-2'>Actions</div>
             </div>
 
             {/* LISTE DYNAMIQUE DES UTILISATEURS */}

@@ -22,9 +22,22 @@ export const ProtectedRoute = ({role}) => {
     const user = JSON.parse(userData);
     // Vérification du rôle 
     // 1 - si user n'a pas le vrai rôle il sera renvoye directement a home
-    if (user.role !== role) {
+    if (!user || !user.role) {
+        return <Navigate to='/' replace />;
+    }
+    let ROle = [];
+    if (Array.isArray(role)) {
+        ROle = role.map(function(item){
+            return String(item).toLowerCase();
+        });
+    }else {
+        ROle = [String(role).toLowerCase()]
+    }
+    const userRole = String(user.role).toLowerCase();
+    if (!ROle.includes(userRole)){
         return <Navigate to='/' replace />;
     }
     // 2 - si tout est ok il renvoie vers la page suivante
     return <Outlet/>;
+
 }

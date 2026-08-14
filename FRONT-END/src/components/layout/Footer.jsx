@@ -1,9 +1,28 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Logo from '../../assets/images/logo/logo.png'
-import { FaFacebook,FaEnvelope,FaTwitter,FaTiktok } from 'react-icons/fa6'
+import { FaFacebook, FaEnvelope, FaTwitter, FaTiktok } from 'react-icons/fa6'
 import { FaWeebly } from 'react-icons/fa'
 import { Link } from 'react-router'
+import { getFormations } from '../../services/formations' //pour recuperer rapidement les donnees
+
 export const Footer = () => {
+  const [formations, setFormations] = useState([])
+
+  useEffect(() => {
+    const fetchFormations = async () => {
+      try {
+        const res = await getFormations()
+        // Ajuste la récupération de la donnée selon la réponse de ton API (res.data ou res)
+        const data = res?.data || res || []
+        setFormations(Array.isArray(data) ? data : [])
+      } catch (error) {
+        console.error("Erreur lors de la récupération des formations:", error)
+      }
+    }
+
+    fetchFormations()
+  }, [])
+
   return (
     <footer className='xl:block hidden h-75 w-screen bg-blue-950 '>
       <div className='flex items-center m-4'>
@@ -32,28 +51,27 @@ export const Footer = () => {
             </div>
           </div>
           <div>
-            <h1  className='text-white font-bold m-3'>Ressources</h1>
-            <div className='m-2 '>
-              <Link to=""><div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>FAQ</div></Link>
-              <Link to=""><div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Guide d'utilisation</div></Link>
-              <Link to=""><div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Conditions d'utilisation</div></Link>
-              <Link to=""><div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Politique de confidualité</div></Link>
-            </div>
-          </div>
-          <div>
             <h1  className='text-white font-bold m-3'>Formations</h1>
             <div className='m-2 '>
-              <Link to="/Formations"><div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Dévelopement Web</div></Link>
-              <Link to="/Formations"><div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>CyberSécurité</div></Link>
-              <Link to="/Formations"><div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Anglais-Français-Espagnol</div></Link>
+              {formations.length > 0 ? (
+                formations.map((item, index) => (
+                  <Link key={item._id || item.id || index} to="/Formations">
+                    <div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>
+                      {item.titre || item.nom || item.title}
+                    </div>
+                  </Link>
+                ))
+              ) : (
+                <div className='text-[0.8rem] text-gray-300 my-2'>Aucune formation</div>
+              )}
             </div>
           </div>
           <div>
             <h1 className='text-white font-bold m-3'> Contact</h1>
             <div className='m-2'>
-              <Link to=""><div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Email: imtechinfo@gmail.com</div></Link>
-              <Link to=""><div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Téléphone: +261 33 12 345 83</div></Link>
-              <Link to=""><div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Adresse: Antananarivo, Madagascar</div></Link>
+              <a href="mailto:formation@imtechinfo.com"><div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Email: imtechinfo@gmail.com</div></a>
+              <a href="tel:+261331234583"><div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Téléphone: +261 33 12 345 83</div></a>
+              <a href=""><div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>Adresse: Antananarivo, Madagascar</div></a>
             </div>
           </div>
         </div>

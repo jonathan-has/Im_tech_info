@@ -22,6 +22,31 @@ export const Dashsuperadmin = () => {
     const [chargement, setChargement] = useState(true);
     const [error, setError] = useState(null);
 
+    // RECUPERARION DE L'USER
+    // 1. Récupération des données du localStorage
+    const userData = localStorage.getItem('user');
+    const roleDirect = localStorage.getItem('role');
+
+    let user_role = "";
+
+    // 2. Extraire le rôle (soit depuis l'objet 'user', soit depuis la clé 'role')
+    if (userData) {
+        const user = JSON.parse(userData);
+        if (user && user.role) {
+            user_role = user.role;
+        }
+    } else if (roleDirect) {
+        user_role = roleDirect;
+    }
+
+    // 3. Attribution de la valeur finale
+    let role = "";
+
+    if (user_role === "RH" || user_role === "rh") {
+        role = "RH";
+    } else if (user_role === "Superadmin" || user_role === "superadmin") {
+        role = "Superadmin";
+    }
     useEffect(() => {
         const chargDash = async () => {
             try {
@@ -52,7 +77,7 @@ export const Dashsuperadmin = () => {
             <h1 className='font-extrabold md:text-xl text-md'>Tableau de bord</h1>
             <div className='flex items-center gap-2'>
             <div className='border-2 w-7 h-7 rounded-2xl p-2 bg-amber-300'></div>
-            <div className='font-bold text-md lg:block hidden'>SuperAdmin</div> 
+            <div className='font-bold text-md lg:block hidden'>{role}</div> 
             <div className='relative flex'>
               <FaBell size={25}/>
               <div className='-m-1 w-4 h-4 p-1 text-[8px] flex justify-center items-center text-white rounded-2xl text-center bg-red-400'>{stats.notifications}</div>

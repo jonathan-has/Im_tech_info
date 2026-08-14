@@ -89,7 +89,7 @@ export const router = createBrowserRouter([
     element: <Dashlayout />,
     children: [
       {
-        element: <ProtectedRoute role='superadmin'/>,
+        element: <ProtectedRoute role={['Superadmin','RH','rh','superadmin']}/>, //pour ajouter plusieurs role
         children:[
           {
             path: "superadmin",

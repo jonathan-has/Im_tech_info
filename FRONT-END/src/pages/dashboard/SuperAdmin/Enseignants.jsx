@@ -43,11 +43,47 @@ export const Enseignants = () => {
         const token = localStorage.getItem('token');
         try {
             const res = await getEnseignants(token);
-            setEnseignants(res || []);
+            if (res) {
+                setEnseignants(res);
+            } else {
+                setEnseignants([]);
+            }
         } catch (error) {
             afficherNotification("Erreur lors du chargement des enseignants", false);
         }
     };
+
+    // RECUPERATION DE L'USER ET DU ROLE
+    const userData = localStorage.getItem('user');
+    const roleDirect = localStorage.getItem('role');
+
+    let user_role = "";
+
+    if (userData) {
+        const user = JSON.parse(userData);
+        if (user && user.role) {
+            user_role = user.role;
+        }
+    } else if (roleDirect) {
+        user_role = roleDirect;
+    }
+
+    let role = "";
+
+    if (user_role === "RH" || user_role === "rh") {
+        role = "RH";
+    } else if (user_role === "Superadmin" || user_role === "superadmin") {
+        role = "Superadmin";
+    }
+
+    // Gestion de l'affichage du bouton de suppression selon le rôle
+    let style = {};
+    if (role === "Superadmin") {
+        style = 'cursor-pointer hover:text-red-600 active:scale-95 transition-all p-1.5 hidden';
+    }
+    else if (role === "RH") {
+        style = 'cursor-pointer hover:text-red-600 active:scale-95 transition-all p-1.5';
+    }
 
     useEffect(() => {
         chargerEnseignants();
@@ -63,7 +99,11 @@ export const Enseignants = () => {
         const res = await postEnseignant(nom, matiere, cin, email, token);
 
         if (res && res.success) {
-            afficherNotification(res.message || "Enseignant créé avec succès !", true);
+            let msgSucces = "Enseignant créé avec succès !";
+            if (res.message) {
+                msgSucces = res.message;
+            }
+            afficherNotification(msgSucces, true);
             setNom('');
             setMatiere('');
             setCin('');
@@ -71,7 +111,11 @@ export const Enseignants = () => {
             setAffichageAjout(false);
             chargerEnseignants();
         } else {
-            afficherNotification(res.message || "Erreur lors de la création", false);
+            let msgErreur = "Erreur lors de la création";
+            if (res && res.message) {
+                msgErreur = res.message;
+            }
+            afficherNotification(msgErreur, false);
         }
     };
 
@@ -84,7 +128,11 @@ export const Enseignants = () => {
             setEnseignants(nouvelleListe);
             afficherNotification(`Enseignant "${nomEnseignant}" supprimé !`, true);
         } else {
-            afficherNotification(res.message || "Erreur lors de la suppression", false);
+            let msgErreur = "Erreur lors de la suppression";
+            if (res && res.message) {
+                msgErreur = res.message;
+            }
+            afficherNotification(msgErreur, false);
         }
     };
 
@@ -103,9 +151,17 @@ export const Enseignants = () => {
         const res = await getElementsEnseignant(idEnseignant, token);
 
         if (res && res.success) {
-            setListeEleves(res.eleves || []);
+            if (res.eleves) {
+                setListeEleves(res.eleves);
+            } else {
+                setListeEleves([]);
+            }
         } else {
-            afficherNotification(res.message || "Erreur lors du chargement des élèves", false);
+            let msgErreur = "Erreur lors du chargement des élèves";
+            if (res && res.message) {
+                msgErreur = res.message;
+            }
+            afficherNotification(msgErreur, false);
         }
 
         setChargementElements(false);
@@ -121,28 +177,46 @@ export const Enseignants = () => {
         const res = await getElementsEnseignant(idEnseignant, token);
 
         if (res && res.success) {
-            setListeSupports(res.supports || []);
+            if (res.supports) {
+                setListeSupports(res.supports);
+            } else {
+                setListeSupports([]);
+            }
         } else {
-            afficherNotification(res.message || "Erreur lors du chargement des supports", false);
+            let msgErreur = "Erreur lors du chargement des supports";
+            if (res && res.message) {
+                msgErreur = res.message;
+            }
+            afficherNotification(msgErreur, false);
         }
 
         setChargementElements(false);
     };
 
-    // Icône de notification
-    let icone = success ? (
-        <FaCheck size={18} className="shrink-0 border-2 rounded-2xl text-green-600 border-green-600 p-0.5" />
-    ) : (
-        <FaX size={18} className="shrink-0 border-2 rounded-2xl text-red-600 border-red-600 p-0.5" />
-    );
+    // Icône de notification (sans ternaire)
+    let icone = null;
+    if (success) {
+        icone = <FaCheck size={18} className="shrink-0 border-2 rounded-2xl text-green-600 border-green-600 p-0.5" />;
+    } else {
+        icone = <FaX size={18} className="shrink-0 border-2 rounded-2xl text-red-600 border-red-600 p-0.5" />;
+    }
 
-    let notification_classe = visible
-        ? 'z-50 opacity-100 translate-y-0 sm:translate-x-0 transition-all duration-300 fixed top-4 left-4 right-4 sm:right-auto sm:max-w-sm flex p-3 gap-3 items-center font-bold rounded-xl bg-white text-slate-800 shadow-xl border border-slate-200 text-sm'
-        : 'z-50 opacity-0 -translate-y-4 sm:translate-y-0 sm:-translate-x-10 transition-all duration-300 fixed top-4 left-4 right-4 sm:right-auto sm:max-w-sm pointer-events-none flex p-3 gap-3 items-center font-bold rounded-xl bg-white text-slate-800 shadow-xl border border-slate-200 text-sm';
+    // Classe CSS de notification (sans ternaire)
+    let notification_classe = "";
+    if (visible) {
+        notification_classe = 'z-50 opacity-100 translate-y-0 sm:translate-x-0 transition-all duration-300 fixed top-4 left-4 right-4 sm:right-auto sm:max-w-sm flex p-3 gap-3 items-center font-bold rounded-xl bg-white text-slate-800 shadow-xl border border-slate-200 text-sm';
+    } else {
+        notification_classe = 'z-50 opacity-0 -translate-y-4 sm:translate-y-0 sm:-translate-x-10 transition-all duration-300 fixed top-4 left-4 right-4 sm:right-auto sm:max-w-sm pointer-events-none flex p-3 gap-3 items-center font-bold rounded-xl bg-white text-slate-800 shadow-xl border border-slate-200 text-sm';
+    }
 
     // Modale de détails (Voir)
     let contenuModaleVoir = null;
     if (affichageVoir && elementSelectionne) {
+        let dateCreation = "N/A";
+        if (elementSelectionne.date_creation) {
+            dateCreation = elementSelectionne.date_creation;
+        }
+
         contenuModaleVoir = (
             <div className='fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-3 sm:p-4 animate-in fade-in duration-200'>
                 <div className='relative w-full max-w-md max-h-[90vh] overflow-y-auto bg-white text-slate-800 p-5 sm:p-6 rounded-2xl shadow-2xl flex flex-col items-start'>
@@ -160,10 +234,9 @@ export const Enseignants = () => {
                         <p><span className='font-bold text-slate-600'>Matière :</span> {elementSelectionne.matiere}</p>
                         <p><span className='font-bold text-slate-600'>CIN :</span> {elementSelectionne.cin}</p>
                         <p><span className='font-bold text-slate-600'>Email :</span> {elementSelectionne.email}</p>
-                        <p><span className='font-bold text-slate-600'>Date d'ajout :</span> {elementSelectionne.date_creation || 'N/A'}</p>
+                        <p><span className='font-bold text-slate-600'>Date d'ajout :</span> {dateCreation}</p>
                     </div>
 
-                    {/* Boutons séparés pour Élèves et Supports */}
                     <div className='w-full flex flex-col gap-2 mt-5'>
                         <button
                             onClick={() => ouvrirEleves(elementSelectionne.id)}
@@ -199,11 +272,17 @@ export const Enseignants = () => {
         } else if (listeEleves.length === 0) {
             renduEleves = <p className='text-slate-500 text-sm'>Aucun élève trouvé pour ce prof.</p>;
         } else {
-            renduEleves = listeEleves.map((eleve, index) => (
-                <div key={eleve.id || index} className='py-2 border-b border-gray-100 text-sm'>
-                    {eleve.nom}
-                </div>
-            ));
+            renduEleves = listeEleves.map((eleve, index) => {
+                let cle = index;
+                if (eleve.id) {
+                    cle = eleve.id;
+                }
+                return (
+                    <div key={cle} className='py-2 border-b border-gray-100 text-sm'>
+                        {eleve.nom}
+                    </div>
+                );
+            });
         }
 
         contenuModaleEleves = (
@@ -244,12 +323,18 @@ export const Enseignants = () => {
         } else if (listeSupports.length === 0) {
             renduSupports = <p className='text-slate-500 text-sm'>Aucun support envoyé pour l'instant.</p>;
         } else {
-            renduSupports = listeSupports.map((support, index) => (
-                <div key={support.id || index} className='py-2 border-b border-gray-100 flex items-center justify-between gap-2 text-sm'>
-                    <span className='truncate'>{support.titre}</span>
-                    <div className='text-xs text-slate-400 shrink-0'>{support.date_envoi}</div>
-                </div>
-            ));
+            renduSupports = listeSupports.map((support, index) => {
+                let cle = index;
+                if (support.id) {
+                    cle = support.id;
+                }
+                return (
+                    <div key={cle} className='py-2 border-b border-gray-100 flex items-center justify-between gap-2 text-sm'>
+                        <span className='truncate'>{support.titre}</span>
+                        <div className='text-xs text-slate-400 shrink-0'>{support.date_envoi}</div>
+                    </div>
+                );
+            });
         }
 
         contenuModaleSupports = (
@@ -346,43 +431,55 @@ export const Enseignants = () => {
             <div className='p-4 text-center text-gray-500 border-b'>Aucun enseignant trouvé.</div>
         );
     } else {
-        listeEnseignants = enseignants.map((item, index) => (
-            <div
-                key={item.id || index}
-                className='p-3 rounded-md border-b border-gray-100 hover:bg-slate-50 flex items-center justify-between gap-2 sm:grid sm:grid-cols-7 text-sm transition-colors'
-            >
-                <div className='min-w-0 sm:col-span-3'>
-                    <div className='font-bold text-slate-900 truncate'>{item.nom}</div>
-                    <div className='text-xs font-normal text-slate-500 truncate sm:hidden'>
+        listeEnseignants = enseignants.map((item, index) => {
+            let cle = index;
+            if (item.id) {
+                cle = item.id;
+            }
+
+            let dateCreationItem = "N/A";
+            if (item.date_creation) {
+                dateCreationItem = item.date_creation;
+            }
+
+            return (
+                <div
+                    key={cle}
+                    className='p-3 rounded-md border-b border-gray-100 hover:bg-slate-50 flex items-center justify-between gap-2 sm:grid sm:grid-cols-7 text-sm transition-colors'
+                >
+                    <div className='min-w-0 sm:col-span-3'>
+                        <div className='font-bold text-slate-900 truncate'>{item.nom}</div>
+                        <div className='text-xs font-normal text-slate-500 truncate sm:hidden'>
+                            {item.matiere}
+                        </div>
+                    </div>
+                    <div className='hidden sm:block sm:col-span-2 text-xs font-normal text-slate-500 truncate'>
                         {item.matiere}
                     </div>
+                    <div className='hidden sm:block sm:col-span-1 text-gray-500'>{dateCreationItem}</div>
+                    <div className='shrink-0 sm:col-span-1 flex items-center justify-end gap-3 sm:gap-3 text-gray-500'>
+                        <button
+                            type='button'
+                            onClick={() => ouvrirVoir(item)} 
+                            className='cursor-pointer hover:text-blue-600 active:scale-95 transition-all p-1.5'
+                            title="Voir"
+                            aria-label="Voir les détails"
+                        >
+                            <FaEye />
+                        </button>
+                        <button
+                            type='button'
+                            onClick={() => supprimerEnseignant(item.id, item.nom)} 
+                            className={style}
+                            title="Supprimer"
+                            aria-label="Supprimer"
+                        >
+                            <FaTrash className='text-red-600' />
+                        </button>
+                    </div>
                 </div>
-                <div className='hidden sm:block sm:col-span-2 text-xs font-normal text-slate-500 truncate'>
-                    {item.matiere}
-                </div>
-                <div className='hidden sm:block sm:col-span-1 text-gray-500'>{item.date_creation || 'N/A'}</div>
-                <div className='shrink-0 sm:col-span-1 flex items-center justify-end gap-3 sm:gap-3 text-gray-500'>
-                    <button
-                        type='button'
-                        onClick={() => ouvrirVoir(item)} 
-                        className='cursor-pointer hover:text-blue-600 active:scale-95 transition-all p-1.5'
-                        title="Voir"
-                        aria-label="Voir les détails"
-                    >
-                        <FaEye />
-                    </button>
-                    <button
-                        type='button'
-                        onClick={() => supprimerEnseignant(item.id, item.nom)} 
-                        className='cursor-pointer hover:text-red-600 active:scale-95 transition-all p-1.5'
-                        title="Supprimer"
-                        aria-label="Supprimer"
-                    >
-                        <FaTrash className='text-red-600' />
-                    </button>
-                </div>
-            </div>
-        ));
+            );
+        });
     }
 
     return (

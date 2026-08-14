@@ -75,10 +75,13 @@ export const Login = () => {
                 if (role === "superadmin") {
                     navigate('/Dashboard/Superadmin/Dashsuperadmin');
                 }
+                else if ( role === 'RH') {
+                    navigate('/Dashboard/Superadmin/Dashsuperadmin')
+                }
                 else if (role === "enseignants"){
                     navigate('/Dashboard/Teacher/Dashteach');
                 } else if (role === "etudiants") {
-                    navigate('/Dashboard/Etudiants/Formations_etu');
+                    navigate('/Dashboard/etudiants/formations');
                 }
             }
             // apparition du pop-up

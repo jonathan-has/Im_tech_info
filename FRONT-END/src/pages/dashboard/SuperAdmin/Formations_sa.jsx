@@ -193,6 +193,38 @@ export const Formations_sa = () => {
         notification_classe = 'z-50 opacity-0 -translate-x-10 transition-all duration-300 fixed top-4 left-4 pointer-events-none flex p-3 gap-3 items-center font-bold rounded-xl bg-white text-slate-800 shadow-xl border border-slate-200 max-w-[90vw] sm:max-w-xl';
     }
 
+    // RECUPERATION DE L'USER ET DU ROLE
+    const userData = localStorage.getItem('user');
+    const roleDirect = localStorage.getItem('role');
+
+    let user_role = "";
+
+    if (userData) {
+        const user = JSON.parse(userData);
+        if (user && user.role) {
+            user_role = user.role;
+        }
+    } else if (roleDirect) {
+        user_role = roleDirect;
+    }
+
+    let role = "";
+
+    if (user_role === "RH" || user_role === "rh") {
+        role = "RH";
+    } else if (user_role === "Superadmin" || user_role === "superadmin") {
+        role = "Superadmin";
+    }
+
+    // Gestion de l'affichage du bouton de suppression selon le rôle
+    let style = {};
+    if (role === "Superadmin") {
+        style = 'cursor-pointer hover:text-red-600 active:scale-95 transition-all p-1.5 hidden';
+    }
+    else if (role === "RH") {
+        style = 'cursor-pointer hover:text-red-600 active:scale-95 transition-all p-1.5';
+    }
+
     // Modale d'ajout
     let modalAjout = null;
     if (affichage) {
@@ -455,7 +487,7 @@ export const Formations_sa = () => {
                         </div>
                         <div 
                             onClick={() => supprimerFormation(item.id, item.titre)} 
-                            className='cursor-pointer hover:text-red-600 active:scale-95 transition-all p-1'
+                            className={style}
                             title="Supprimer"
                         >
                             <FaTrash className='text-red-600' />

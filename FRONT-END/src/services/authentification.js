@@ -9,15 +9,18 @@
 //         });
 //         const data = await reponse.json(); //retransforme les donnees en objet js comme parse
 //         // !reponse.ok signifie : "Si le serveur nous renvoie un code d'erreur (HTTP 4xx ou 5xx)". =)false
-//         if (reponse.ok) {
-//             // Sauvegarde des identifiants dans la mémoire du navigateur
-//             if (data.token) {
-//                 localStorage.setItem('token', data.token); //recuperation
-//             }
-//             if (data.user) {
-//                 localStorage.setItem('user', JSON.stringify(data.user));
-//             }
-//         }
+        // if (reponse.ok) {
+        //     // Sauvegarde des identifiants dans la mémoire du navigateur
+        //     if (data.token) {
+        //       localStorage.setItem('token', data.token); //recuperation
+        //     }
+        //     if (data.user) {
+        //       localStorage.setItem('user', JSON.stringify(data.user));
+        //     }
+        //     if (data.nom) {
+        //       localStorage.setItem('nom',JSON.stringify(data.nom));
+        //     }
+        // }
 //         return {
 //             success:reponse.ok, //si true : 200 //false 400, 404,500
 //             message:data.message, //recuperation du message depuis le back
@@ -38,26 +41,37 @@
 const FAKE_USERS = [
   {
     id: 1,
-    nom: "Fitiavana Jonathan",
+    nom: "Jonathan Junior",
+    cin:'101 34 463 2819 33',
     email: "admin@test.com",
     password: "1234",
     role: "superadmin"
   },
   {
     id: 2,
-    nom: "Professeur Kevin",
+    nom: "Fitiavana Junior",
+    cin:'101 34 463 2819 33',
+    email: "rh@test.com",
+    password: "1234",
+    role: "RH",
+  },
+  {
+    id: 2,
+    nom: "Professeur Bernie",
+    cin:'101 34 463 2819 33',
     email: "prof@test.com",
     password: "1234",
     role: "enseignants",
-    categorie:"inforamtique"
+    categorie:"informatique"
   },
   {
     id: 3,
-    nom: "Nathalia",
+    nom: "Joella",
+    cin:'101 34 463 2819 33',
     email: "etudiant@test.com",
     password: "1234",
     role: "etudiants",
-    categorie:"nnformatique"
+    categorie:"informatique"
   }
 ];
 
@@ -99,6 +113,9 @@ export const login = async (email, password) => {
     if (data.user) {
       localStorage.setItem('user', JSON.stringify(data.user));
     }
+    if (data.nom) {
+      localStorage.setItem('nom',JSON.stringify(data.nom));
+    }
 
     // CAS 2 : Succès (Simulation HTTP 200)
     return {
@@ -118,12 +135,12 @@ export const login = async (email, password) => {
 
 
 // Register
-// export const Registre = async(nom,email,password,second_pass) => {
+// export const Registre = async(nom,cin,categorie,email,password,second_pass) => {
 //     try {
 //         const reponse = await fetch(`${API_URL}/Register`,{
 //             method:'POST',
 //             headers:{'Content-Type':'application/json'},
-//             body:JSON.stringify({nom,email,password}) //transformer les donnees js en jso
+//             body:JSON.stringify({nom,cin,categorie,email,password}) //transformer les donnees js en jso
 //         });
 //         const data = await reponse.json(); //retransforme les donnees en objet js comme parse
 //         if (reponse.ok) {
@@ -153,7 +170,7 @@ export const login = async (email, password) => {
 
 
 // 2. Service d'Inscription (Registre)
-export const Registre = async (nom, email, password) => {
+export const Registre = async (nom, email,cin, password) => {
     try {
         // Simulation d'un délai réseau (500 ms)
         await new Promise((resolve) => setTimeout(resolve, 500));
@@ -172,6 +189,7 @@ export const Registre = async (nom, email, password) => {
         const newUser = {
             id: FAKE_USERS.length + 1,
             nom: nom,
+            cin:cin,
             email: email,
             password: password,
             role: "etudiants" // Tu peux changer par "enseignants" ou "superadmin" pour tester les autres redirections
@@ -186,6 +204,7 @@ export const Registre = async (nom, email, password) => {
             user: {
                 id: newUser.id,
                 nom: newUser.nom,
+                cin:newUser.cin,
                 email: newUser.email,
                 role: newUser.role
             },
