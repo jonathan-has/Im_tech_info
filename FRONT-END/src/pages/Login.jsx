@@ -1,4 +1,3 @@
-import React from 'react';
 import Logo from '../assets/images/logo/logo.png';
 import { FaFacebook,FaInstagram,FaTwitter,FaTiktok } from 'react-icons/fa6';
 import { FaCheck,FaX } from 'react-icons/fa6';

@@ -1,2 +1,2 @@
 
-// app.user('/Login',register);
+const {register} = require('./src/router/authRoutes');//authRoutes

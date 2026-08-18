@@ -1,1 +1,15 @@
+# Fichiers de configuration sensible
+.env
 
+# Dossier des modules Node.js (très lourd, ne se met jamais sur GitHub)
+node_modules/
+
+# Logs éventuels
+*.log
+
+# Ignorer le .env spécifiquement dans le dossier back
+BACK-END/.env
+
+# Ignorer aussi les node_modules du back et du front si besoin
+BACK-END/node_modules/
+FRONT-END/node_modules/
