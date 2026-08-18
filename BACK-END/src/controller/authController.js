@@ -1,14 +1,29 @@
-// req http depuis l'api
-const userModel = require('../models/userModel');
-const bcrypt= require('bcrypt');
-exports.register = async(req,res) => {
-    const {nom,prenom,cin,email, password} = req.body;
+const service = require('./../services/authService');
+exports.login = async(req,res) => {
     try {
-        const hash = await bcrypt.hash(password,10);
-        await userModel.insertUser(nom,prenom,cin,email,hash)
-        return res.status(201).json({message:"Inscription réussi!"}); //message status
-    }catch(err){
-        return res.status(500).json(err);
+        const {email,password} = req.body;
+        const result = await service.login(email,password);
+        return res.status(200).json(result);
     }
+    catch(err) {
+        // precision de l'erreur
+        if (err.message == 'Utilisateur introuvable !' || err.message == 'Mot de passe incorrect !'){
+            return res.status(401).json({message:err.message}); 
+        }
+        return res.status(500).json(err); 
+    }
+}
 
+exports.register = async(req,res)  => {
+    try {
+        const {nom,prenom,cin,email,password,role_id} = req.body;
+        const result = await service.register(nom,prenom,cin,email,password,role_id);
+        return res.status(201).json(result); //message status
+    }catch(err) {
+        // precision de l'erreur
+        if (err.message == 'Utilisateur introuvable !' || err.message == 'Mot de passe incorrect !'){
+            return res.status(401).json({message:err.message}); 
+        }
+        return res.status(500).json(err); 
+    }
 }

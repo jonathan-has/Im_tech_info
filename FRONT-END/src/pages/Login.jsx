@@ -67,27 +67,27 @@ export const Login = () => {
             setChargement(true);
             const resultat = await login(email,password); //la fonction qui se trouve dans '../services/authentification';
             
+            // apparition du pop-up
+            setTimeout(() => {
+                notification(resultat.message, resultat.success);//depuis le back
+            },3000);           
+            
             // Pour la redirection des users
             if (resultat.success) {
-                const role = resultat.data?.user?.role;
-                // le ? evite le crash s'il y a une erreur
-                if (role === "superadmin") {
+                const user = JSON.parse(localStorage.getItem('user'));
+                if (user === "superadmin") {
                     navigate('/Dashboard/Superadmin/Dashsuperadmin');
                 }
-                else if ( role === 'RH') {
+                else if ( user === 'RH') {
                     navigate('/Dashboard/Superadmin/Dashsuperadmin')
                 }
-                else if (role === "enseignants"){
+                else if (user === "enseignants"){
                     navigate('/Dashboard/Teacher/Dashteach');
-                } else if (role === "etudiants") {
+                } else if (user === "etudiant") {
                     navigate('/Dashboard/etudiants/formations');
                 }
             }
-            // apparition du pop-up
-            notification(resultat.message,resultat.success); //depuis le back
-            setChargement(false);
-            // Validation préalable
-
+            setChargement(false)
         }
   return (
     <div>

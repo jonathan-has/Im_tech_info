@@ -8,13 +8,12 @@ const dotenv = require('dotenv').config();
 // db
 const db = require('./src/config/configdb');
 const userRoutes = require('./src/router/userRoutes');//userRoutes
-const auth = require('./src/router/authRoutes');//authRoutes
+const authRoutes = require('./src/router/authRoutes');//authRoutes
 
 app.use(cors()); //pour communiquer react/nodejs et envoyer des req HTTP
 app.use(express.json()) //transformer les données json en objets
 
-app.use('/auth',auth);
-// app.user('/Login',login);
+app.use('/auth',authRoutes);
 
 app.listen(port, () =>{
     console.log(`Le port ${port} a été connecté http://localhost:3000`);

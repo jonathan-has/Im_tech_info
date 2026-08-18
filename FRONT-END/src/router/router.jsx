@@ -144,7 +144,7 @@ export const router = createBrowserRouter([
         ]
       },
       {
-        element: <ProtectedRoute role='etudiants'/>,
+        element: <ProtectedRoute role='etudiant'/>,
         children: [
           {
             path: "etudiants",
