@@ -21,7 +21,7 @@ exports.register = async(req,res)  => {
         return res.status(201).json(result); //message status
     }catch(err) {
         // precision de l'erreur
-        if (err.message == 'Utilisateur introuvable !' || err.message == 'Mot de passe incorrect !'){
+        if (err.message == 'Mot de passe incorrect !' ||err.message == 'Cette email est déja utilisé !'){
             return res.status(401).json({message:err.message}); 
         }
         return res.status(500).json(err); 

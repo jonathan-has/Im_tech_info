@@ -13,8 +13,19 @@ export const Footer = () => {
       try {
         const res = await getFormations()
         // Ajuste la récupération de la donnée selon la réponse de ton API (res.data ou res)
-        const data = res?.data || res || []
-        setFormations(Array.isArray(data) ? data : [])
+        let data = res?.data;
+        if (!data) {
+          data = res;
+        }
+        if (!data) {
+          data = [];
+        }
+
+        let finalFormations = [];
+        if (Array.isArray(data)) {
+          finalFormations = data;
+        }
+        setFormations(finalFormations)
       } catch (error) {
         console.error("Erreur lors de la récupération des formations:", error)
       }
@@ -22,6 +33,22 @@ export const Footer = () => {
 
     fetchFormations()
   }, [])
+
+  // Remplacement du ternaire pour l'affichage des formations
+  let renduFormations = null;
+  if (formations.length > 0) {
+    renduFormations = formations.map((item, index) => (
+      <Link key={item.ID} to="/Formations">
+        <div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>
+          {item.Titre}
+        </div>
+      </Link>
+    ));
+  } else {
+    renduFormations = (
+      <div className='text-[0.8rem] text-gray-300 my-2'>Aucune formation</div>
+    );
+  }
 
   return (
     <footer className='xl:block hidden h-75 w-screen bg-blue-950 '>
@@ -53,17 +80,7 @@ export const Footer = () => {
           <div>
             <h1  className='text-white font-bold m-3'>Formations</h1>
             <div className='m-2 '>
-              {formations.length > 0 ? (
-                formations.map((item, index) => (
-                  <Link key={item._id || item.id || index} to="/Formations">
-                    <div className='text-[0.8rem] text-gray-300 my-2 duration-300 active:scale-95 hover:scale-105 hover:translate-x-5 cursor-pointer hover:text-green-200'>
-                      {item.titre || item.nom || item.title}
-                    </div>
-                  </Link>
-                ))
-              ) : (
-                <div className='text-[0.8rem] text-gray-300 my-2'>Aucune formation</div>
-              )}
+              {renduFormations}
             </div>
           </div>
           <div>

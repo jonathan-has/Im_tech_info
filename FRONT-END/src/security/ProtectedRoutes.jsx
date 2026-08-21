@@ -6,7 +6,6 @@ export const ProtectedRoute = ({role}) => {
     if (!user) {
         return <Navigate to='/Login' replace />;
     }
-    console.log(user);
     
     // Vérification du rôle 
     // 1 - si user n'a pas le vrai rôle il sera renvoye directement a home

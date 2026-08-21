@@ -1,7 +1,20 @@
 const connection = require('./../config/configdb');
 
+const verification = (email)=> {
+    return new Promise((resolve,reject)=> {
+        const first_sql = 'SELECT email FROM user WHERE email = ?';
+        connection.query(first_sql,[email],(err,result) => {
+        if (err) {
+            return reject(err);
+        }
+        resolve(result.length>0);
+        })   
+    })
+}
+
 const insertUser = (nom,prenom,cin,email, password,Role_id) => {
     return new Promise((resolve,reject) =>{
+
         const req_sql = 'INSERT INTO user(NOM,Prenom,CIN,email,password,Role_id) VALUES(?,?,?,?,?,?)';
         connection.query(req_sql,[nom,prenom,cin,email,password,Role_id],(err,result)=>{
             if (err) {
@@ -27,6 +40,7 @@ const readuser = (email) => {
     });
 }
 module.exports= {
+    verification,
     insertUser,
-    readuser
+    readuser,
 }

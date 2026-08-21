@@ -41,38 +41,38 @@ export const Formations = () => {
   else {
       listeFormation = formations.map((item,index) => {
         let itemKey = index;
-        if (item.id) {
-            itemKey = item.id;
+        if (item.ID) {
+            itemKey = item.ID;
         }
 
         let itemTimer = 'N/A';
-        if (item.timer) {
-            itemTimer = item.timer;
-        } else if (item.duree) {
-            itemTimer = item.duree;
+        if (item.Timer) {
+            itemTimer = item.Timer;
+        } else if (item.Duree) {
+            itemTimer = item.Duree;
         }
 
         let itemDate = 'N/A';
-        if (item.date) {
-            itemDate = item.date;
-        } else if (item.date_creation) {
-            itemDate = item.date_creation;
+        if (item.Date) {
+            itemDate = item.Date;
+        } else if (item.Date_creation) {
+            itemDate = item.Date_creation;
         }
 
-        let sousTitreMobile = item.categorie;
-        if (item.timer) {
-          sousTitreMobile = item.categorie + ' • ' + item.timer;
+        let sousTitreMobile = item.Categorie;
+        if (item.Timer) {
+          sousTitreMobile = item.Categorie + ' • ' + item.Timer;
         }
-        let description = item.description;
-        if (item.description){
-          description = item.description
+        let description = item.Description;
+        if (item.Description){
+          description = item.Description
         }
         return (
           <Card_form
-              title= {item.titre}
-              timer={itemTimer}
-              description={item.description}
-              key={item.key}
+              title= {item.Titre}
+              timer={item.Timer}
+              description={item.Description}
+              key={item.ID}
             />
         )
       });

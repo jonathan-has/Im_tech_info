@@ -7,13 +7,14 @@ const cors = require('cors'); //middleware
 const dotenv = require('dotenv').config();
 // db
 const db = require('./src/config/configdb');
-const userRoutes = require('./src/router/userRoutes');//userRoutes
 const authRoutes = require('./src/router/authRoutes');//authRoutes
+const dashRoutes = require('./src/router/dashRoutes');//dashboard routes
 
 app.use(cors()); //pour communiquer react/nodejs et envoyer des req HTTP
 app.use(express.json()) //transformer les données json en objets
 
 app.use('/auth',authRoutes);
+app.use('/dashboard',dashRoutes);
 
 app.listen(port, () =>{
     console.log(`Le port ${port} a été connecté http://localhost:3000`);

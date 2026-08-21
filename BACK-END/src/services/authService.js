@@ -8,8 +8,15 @@ exports.register = async(nom,prenom,cin,email,password,role_id) => {
 
         // role de l'etudiant durant l'inscription
         const user = 'etudiant';
-
-        await userModel.insertUser(nom,prenom,cin,email,hash,4);
+        
+        // si existant
+        const newUser = await userModel.verification(email);
+        if (newUser) {
+            throw new Error("Cette email est déja utilisé !");
+        }
+        else {
+            await userModel.insertUser(nom,prenom,cin,email,hash,4);
+        }
 
         // generation de son JWT:
         const token = jwt.sign(

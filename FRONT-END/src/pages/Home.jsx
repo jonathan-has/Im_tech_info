@@ -18,62 +18,65 @@ export const Home = () => {
     //recuperation 
   const [formations,setFormations] = useState([]);
   const chargerFormations = async () => {
+    const res = await getFormations();
     try {
-        const reponse = await getFormations();
-        if (reponse) {
-          setFormations(reponse);
-        }else {
+      if (res) {
+          setFormations(res);
+      } else {
           setFormations([]);
-        }
-      } catch (error) {
-        console.log(error);
       }
+    } catch (error) {
+        console.log(error);
+        
     }
+    };
   // useEffect
   useEffect(() => {
     chargerFormations();
   },[]);
   // liste contenant les formations
   let listeFormation = null;
+  console.log(formations);
+  
   if (formations.length === 0) {
     listeFormation = (
       <div className='p-4 text-center text-gray-500 border-b'>Aucune formation trouvée.</div>
     )
   }
-  else if (formations.length === 4){
+  else if (formations.length <= 4){
       listeFormation = formations.map((item,index) => {
         let itemKey = index;
-        if (item.id) {
-            itemKey = item.id;
+        if (item.ID) {
+            itemKey = item.ID;
         }
 
         let itemTimer = 'N/A';
-        if (item.timer) {
-            itemTimer = item.timer;
-        } else if (item.duree) {
-            itemTimer = item.duree;
+        if (item.Timer) {
+            itemTimer = item.Timer;
+        } else if (item.Duree) {
+            itemTimer = item.Duree;
         }
 
         let itemDate = 'N/A';
-        if (item.date) {
-            itemDate = item.date;
-        } else if (item.date_creation) {
-            itemDate = item.date_creation;
+        if (item.Date) {
+            itemDate = item.Date;
+        } else if (item.Date_creation) {
+            itemDate = item.Date_creation;
         }
 
-        let sousTitreMobile = item.categorie;
-        if (item.timer) {
-          sousTitreMobile = item.categorie + ' • ' + item.timer;
+        let sousTitreMobile = item.Categorie;
+        if (item.Timer) {
+            sousTitreMobile = item.Categorie + ' • ' + item.Timer;
         }
-        let description = item.description;
-        if (item.description){
-          description = item.description
+        let description = item.Description;
+        if (item.Description){
+          description = item.Description
         }
         return (
           <Card
-          key={item.id}                                                                                                                                                                                                        
-          formation={item.titre}
-          description={item.description}  
+          key={item.ID}                                                                                                                                                                                                        
+          formation={item.Titre}
+          description={item.Description}  
         />
         )
       });

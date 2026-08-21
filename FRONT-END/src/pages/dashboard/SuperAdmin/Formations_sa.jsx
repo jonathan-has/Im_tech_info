@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaEye, FaPenToSquare, FaTrash, FaCheck, FaX, FaXmark } from 'react-icons/fa6';
-import { postformations, getFormations } from '../../../services/Dashboard/superadmin/superadminformation';
+import { postformations, getFormations, deleteFormations, putFormations } from '../../../services/Dashboard/superadmin/superadminformation';
 
 export const Formations_sa = () => {
     // Hooks d'état de la liste et des modales
@@ -56,7 +56,8 @@ export const Formations_sa = () => {
                 setFormations([]);
             }
         } catch (error) {
-            afficherNotification("Erreur lors du chargement des formations", false);
+            console.log(error);
+            
         }
     };
 
@@ -78,7 +79,7 @@ export const Formations_sa = () => {
         try {
             const res = await postformations(titre, categorie, timer, description, dateAutomatique, token);
 
-            let estReussi = false;
+            let estReussi = true;
             if (res) {
                 if (res.success || res.status === 200 || res.status === 201) {
                     estReussi = true;
@@ -86,18 +87,22 @@ export const Formations_sa = () => {
             }
 
             if (estReussi) {
-                let msgSucces = "Formation créée avec succès !";
+                let msgSucces = "Formation ajoutée avec succès !";
                 if (res && res.message) {
                     msgSucces = res.message;
+                } else if (res && res.data && res.data.message) {
+                    msgSucces = res.data.message;
                 }
                 afficherNotification(msgSucces, true);
                 reinitialiserFormulaire();
                 setAffichage(false);
                 chargerFormations();
             } else {
-                let msgErreur = "Erreur lors de la création.";
+                let msgErreur = "Erreur lors de l'ajout.";
                 if (res && res.message) {
                     msgErreur = res.message;
+                } else if (res && res.data && res.data.message) {
+                    msgErreur = res.data.message;
                 }
                 afficherNotification(msgErreur, false);
             }
@@ -109,10 +114,23 @@ export const Formations_sa = () => {
     };
 
     // Supprimer une formation
-    const supprimerFormation = (id, titreFormation) => {
-        const nouvelleListe = formations.filter((item) => item.id !== id);
-        setFormations(nouvelleListe);
-        afficherNotification(`Formation "${titreFormation}" supprimée !`, true);
+    const supprimerFormation = async (id, titreFormation) => {
+        const token = localStorage.getItem('token');
+        try {
+            // On appelle l'API avant de modifier l'interface
+            await deleteFormations(id, token);
+
+            // Si l'API réussit, on met à jour la liste localement
+            const nouvelleListe = formations.filter((item) => item.ID !== id);
+            setFormations(nouvelleListe);
+            
+            afficherNotification(`Formation "${titreFormation}" supprimée !`, true);
+            console.log("Suppression réussie pour l'ID :", id);
+        } catch (error) {
+            // Si l'API échoue, on affiche une notification d'erreur
+            console.error("Erreur lors de la suppression :", error);
+            afficherNotification(`Erreur : impossible de supprimer "${titreFormation}"`, false);
+        }
     };
 
     // Ouvrir les détails
@@ -124,46 +142,60 @@ export const Formations_sa = () => {
     // Ouvrir la modification
     const ouvrirEdit = (item) => {
         setElementSelectionne(item);
-        setEditTitre(item.titre || '');
-        setEditCategorie(item.categorie || '');
+        setEditTitre(item.Titre || '');
+        setEditCategorie(item.Categorie || '');
         
         let dureeValue = '';
-        if (item.timer) {
-            dureeValue = item.timer;
-        } else if (item.duree) {
-            dureeValue = item.duree;
+        if (item.Timer) {
+            dureeValue = item.Timer;
+        } else if (item.Duree) {
+            dureeValue = item.Duree;
         }
         setEditTimer(dureeValue);
         
-        setEditDescription(item.description || '');
+        setEditDescription(item.Description || '');
         setAffichageEdit(true);
     };
 
-    // Sauvegarder la modification
-    const enregistrerModification = () => {
-        if (!editTitre || !editCategorie || !editTimer || !editDescription) {
-            afficherNotification("Veuillez remplir tous les champs !", false);
-            return;
+const enregistrerModification = async (id) => {
+    console.log("=== 1. DEBUT DE LA FONCTION ===", { id, editTitre, editCategorie, editTimer, editDescription });
+
+    if (!editTitre || !editCategorie || !editTimer || !editDescription) {
+        console.log("=== ERREUR: Champs vides ===");
+        afficherNotification("Veuillez remplir tous les champs !", false);
+        return;
+    }
+
+    const token = localStorage.getItem('token');
+    try {
+        console.log("=== 2. APPEL API EN COURS ===");
+        const reponseApi = await putFormations(id, editTitre, editCategorie, editTimer, editDescription, token);
+        console.log("=== 3. REPONSE API RECUE ===", reponseApi);
+    }
+    catch (err) {
+        console.log("=== ERREUR CATCH API ===", err);
+        afficherNotification("Erreur lors de la mise à jour.", false);
+        return; 
+    }
+
+    console.log("=== 4. MISE A JOUR DU STATE LOCAL ===");
+    const listeMiseAJour = formations.map((item) => {
+        if (String(item.ID) === String(id)) { 
+            return {
+                ...item,
+                Titre: editTitre,
+                Categorie: editCategorie,
+                Timer: editTimer,
+                Description: editDescription
+            };
         }
+        return item;
+    });
 
-        const listeMiseAJour = formations.map((item) => {
-            if (item.id === elementSelectionne.id) {
-                return {
-                    ...item,
-                    titre: editTitre,
-                    categorie: editCategorie,
-                    timer: editTimer,
-                    description: editDescription
-                };
-            }
-            return item;
-        });
-
-        setFormations(listeMiseAJour);
-        setAffichageEdit(false);
-        afficherNotification("Formation mise à jour avec succès !", true);
-    };
-
+    setFormations(listeMiseAJour);
+    setAffichageEdit(false);
+    afficherNotification("Formation mise à jour avec succès !", true);
+};
     // Gestion des classes et icônes avec conditions if/else
     let classeBouton;
     if (chargement) {
@@ -293,22 +325,22 @@ export const Formations_sa = () => {
     if (affichageVoir) {
         if (elementSelectionne) {
             let affichageTimer = 'N/A';
-            if (elementSelectionne.timer) {
-                affichageTimer = elementSelectionne.timer;
-            } else if (elementSelectionne.duree) {
-                affichageTimer = elementSelectionne.duree;
+            if (elementSelectionne.Timer) {
+                affichageTimer = elementSelectionne.Timer;
+            } else if (elementSelectionne.Duree) {
+                affichageTimer = elementSelectionne.Duree;
             }
 
             let affichageDate = 'N/A';
-            if (elementSelectionne.date) {
-                affichageDate = elementSelectionne.date;
-            } else if (elementSelectionne.date_creation) {
-                affichageDate = elementSelectionne.date_creation;
+            if (elementSelectionne.Date) {
+                affichageDate = elementSelectionne.Date;
+            } else if (elementSelectionne.Date_creation) {
+                affichageDate = elementSelectionne.Date_creation;
             }
 
             let affichageDescription = 'Aucune description disponible.';
-            if (elementSelectionne.description) {
-                affichageDescription = elementSelectionne.description;
+            if (elementSelectionne.Description) {
+                affichageDescription = elementSelectionne.Description;
             }
 
             modalVoir = (
@@ -324,8 +356,8 @@ export const Formations_sa = () => {
                         <h1 className='font-extrabold text-2xl mb-4 text-purple-700'>Détails de la formation</h1>
                         
                         <div className='w-full space-y-3 text-left border-t pt-3 text-sm'>
-                            <p><span className='font-bold text-slate-600'>Titre :</span> {elementSelectionne.titre}</p>
-                            <p><span className='font-bold text-slate-600'>Catégorie :</span> {elementSelectionne.categorie}</p>
+                            <p><span className='font-bold text-slate-600'>Titre :</span> {elementSelectionne.Titre}</p>
+                            <p><span className='font-bold text-slate-600'>Catégorie :</span> {elementSelectionne.Categorie}</p>
                             <p><span className='font-bold text-slate-600'>Durée / Timer :</span> {affichageTimer}</p>
                             <p><span className='font-bold text-slate-600'>Date d'ajout :</span> {affichageDate}</p>
                             <div className='border-t pt-2 mt-2'>
@@ -400,7 +432,7 @@ export const Formations_sa = () => {
                             />
 
                             <button 
-                                onClick={enregistrerModification} 
+                                onClick={()=> enregistrerModification(elementSelectionne.ID)} 
                                 className='w-full border text-center items-center my-3 p-3 bg-amber-600 font-bold text-white rounded-md duration-200 cursor-pointer active:scale-95 hover:bg-amber-500 text-sm'
                             >
                                 Enregistrer les modifications
@@ -421,34 +453,34 @@ export const Formations_sa = () => {
     } else {
         conteneurFormations = formations.map((item, index) => {
             let itemKey = index;
-            if (item.id) {
-                itemKey = item.id;
+            if (item.ID) {
+                itemKey = item.ID;
             }
 
             let itemTimer = 'N/A';
-            if (item.timer) {
-                itemTimer = item.timer;
-            } else if (item.duree) {
-                itemTimer = item.duree;
+            if (item.Timer) {
+                itemTimer = item.Timer;
+            } else if (item.Duree) {
+                itemTimer = item.Duree;
             }
 
             let itemDate = 'N/A';
-            if (item.date) {
-                itemDate = item.date;
-            } else if (item.date_creation) {
-                itemDate = item.date_creation;
+            if (item.Date) {
+                itemDate = item.Date;
+            } else if (item.Date_creation) {
+                itemDate = item.Date_creation;
             }
 
-            let sousTitreMobile = item.categorie;
-            if (item.timer) {
-                sousTitreMobile = item.categorie + ' • ' + item.timer;
+            let sousTitreMobile = item.Categorie;
+            if (item.Timer) {
+                sousTitreMobile = item.Categorie + ' • ' + item.Timer;
             }
 
             return (
                 <div key={itemKey} className='p-3 rounded-md border-b border-gray-100 hover:bg-slate-50 grid grid-cols-12 items-center text-sm transition-colors gap-2'>
                     {/* Titre */}
                     <div className='col-span-7 sm:col-span-6 xl:col-span-4 font-bold text-slate-900 pr-2 truncate'>
-                        {item.titre}
+                        {item.Titre}
                         <div className='block xl:hidden text-xs font-normal text-slate-500 truncate'>
                             {sousTitreMobile}
                         </div>
@@ -456,7 +488,7 @@ export const Formations_sa = () => {
 
                     {/* Catégorie */}
                     <div className='hidden xl:block xl:col-span-3 text-slate-700 truncate'>
-                        {item.categorie}
+                        {item.Categorie}
                     </div>
 
                     {/* Durée / Timer */}
@@ -486,7 +518,7 @@ export const Formations_sa = () => {
                             <FaPenToSquare />
                         </div>
                         <div 
-                            onClick={() => supprimerFormation(item.id, item.titre)} 
+                            onClick={() => supprimerFormation(item.ID, item.Titre)} 
                             className={style}
                             title="Supprimer"
                         >

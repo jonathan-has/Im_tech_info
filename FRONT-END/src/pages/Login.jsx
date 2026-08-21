@@ -75,10 +75,12 @@ export const Login = () => {
             // Pour la redirection des users
             if (resultat.success) {
                 const user = JSON.parse(localStorage.getItem('user'));
+                // console.log(user);
+                
                 if (user === "superadmin") {
                     navigate('/Dashboard/Superadmin/Dashsuperadmin');
                 }
-                else if ( user === 'RH') {
+                else if ( user === 'ressource_humaine') {
                     navigate('/Dashboard/Superadmin/Dashsuperadmin')
                 }
                 else if (user === "enseignants"){
