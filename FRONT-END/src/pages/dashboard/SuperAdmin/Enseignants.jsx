@@ -139,7 +139,16 @@ export const Enseignants = () => {
     }, []);
 
     const enregistrerEnseignant = async () => {
-        if (!nom || !matiere || !cin || !email) {
+        if (cin) {
+            let ciN = Number(cin);
+            if (!ciN){
+                return afficherNotification("Erreur dans le CIN !", false);
+            }
+        } 
+        if (password.length < 8) {
+            return afficherNotification("Le mot de passe est trop court", false);
+        } 
+        if (!nom || !matiere || !cin || !email ||!password) {
             afficherNotification("Veuillez remplir tous les champs !", false);
             return;
         }

@@ -12,6 +12,7 @@ const verification = (email)=> {
     })
 }
 
+// inserer etudiant dans table user
 const insertUser = (nom,prenom,cin,email, password,Role_id) => {
     return new Promise((resolve,reject) =>{
 
@@ -24,6 +25,20 @@ const insertUser = (nom,prenom,cin,email, password,Role_id) => {
         })
     })
 }
+
+// inserer etudiant dans table etudiant
+const insertetutable = (Etudiant_id,Formation_id,Date_creation) => {
+    return new Promise ((resolve,reject) => {
+        const req_sql = "INSERT INTO etudiants(Etudiant_id,Formation_id,Date_creation) VALUES(?,?,?)";
+        connection.query(req_sql,[Etudiant_id,Formation_id,Date_creation],(err,result) => {
+            if (err) {
+                return reject(err);
+            }
+            return resolve(result);
+        } )
+    })
+}
+
 
 const readuser = (email) => {
     return new Promise((resolve,reject) => {
@@ -43,4 +58,5 @@ module.exports= {
     verification,
     insertUser,
     readuser,
+    insertetutable
 }

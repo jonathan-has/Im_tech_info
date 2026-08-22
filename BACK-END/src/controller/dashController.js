@@ -77,3 +77,28 @@ exports.deleteens = async(req,res)=> {
         res.status(500).json(err);        
     }
 }
+
+
+// ETUDIANTS
+exports.getetudiant = async(req,res) => {
+    try {
+        const resultat = await dashService.getetudiant();
+        return res.status(200).json(resultat)
+    }catch(err) {
+        console.log(err);
+        res.status(500).json({message:err.message});
+    }
+}
+
+
+exports.deletetudiant = async(req,res) => {
+    try {
+        const Etudiant_id = req.params.id
+        const result = await dashService.deleteetudiant(Etudiant_id);
+        res.status(200).json(result);
+    }
+    catch(err) {
+        console.log(err);
+        res.status(500).json(err);
+    }
+}

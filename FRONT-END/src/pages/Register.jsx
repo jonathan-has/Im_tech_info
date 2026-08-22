@@ -15,7 +15,6 @@ export const Register = () => {
 
     const [formations, setFormations] = useState([]);
     const [selectedFormationSelect, setSelectedFormationSelect] = useState("");
-    const [selectedFormationsCheckbox, setSelectedFormationsCheckbox] = useState([]);
     const [showFormationModal, setShowFormationModal] = useState(false);
     const [visible, setVisible] = useState(false);
     const [message, setMessage] = useState("");
@@ -23,8 +22,9 @@ export const Register = () => {
     const navigate = useNavigate();
     const [chargement, setChargement] = useState(false);
 
-    useEffect(() => {
-        getFormations().then(res => {
+    const chargerFormations = async () => {
+        try {
+            const res = await getFormations();
             if (res && res.data) {
                 setFormations(res.data);
             } else if (res) {
@@ -32,16 +32,15 @@ export const Register = () => {
             } else {
                 setFormations([]);
             }
-        });
-    }, []);
-
-    const handleCheckboxChange = (id) => {
-        if (selectedFormationsCheckbox.includes(id)) {
-            setSelectedFormationsCheckbox(prev => prev.filter(item => item !== id));
-        } else {
-            setSelectedFormationsCheckbox(prev => [...prev, id]);
+        } catch (error) {
+            console.log(error);
+            setFormations([]);
         }
     };
+
+    useEffect(() => {
+        chargerFormations();
+    }, []);
 
     const notification = (text, isSuccess) => {
         setMessage(text);
@@ -52,11 +51,12 @@ export const Register = () => {
 
     const inscrire = async (e) => {
         e.preventDefault();
-        if (!nom || !prenom || !email || !password || !second_pass || !cin) {
+        // Ajout de la vérification de la formation sélectionnée
+        if (!nom || !prenom || !email || !password || !second_pass || !cin || !selectedFormationSelect) {
             return notification("Veuillez remplir tous les champs", false);
         }
         if (password.length < 8) {
-            return notification("Le mot de passe est trop court",false);
+            return notification("Le mot de passe est trop court", false);
         } 
         if (password !== second_pass) {
             return notification("Les mots de passe ne correspondent pas", false);
@@ -64,26 +64,29 @@ export const Register = () => {
         if (cin) {
             let ciN = Number(cin);
             if (!ciN){
-                return notification("Erreur dans le CIN !",false);
+                return notification("Erreur dans le CIN !", false);
             }
         } 
         setChargement(true);
-        const resultat = await Registre(nom, prenom, cin, email, password, {
-            formationSelect: selectedFormationSelect,
-            formationsCheckbox: selectedFormationsCheckbox
-        });
+        const dateAutomatique = new Date().toISOString().split('T')[0];
+        
+        const resultat = await Registre(nom, prenom, cin, email, password, selectedFormationSelect,dateAutomatique);
+
         setTimeout(() => {
             notification(resultat.message, resultat.success);
-        },3000);
+        }, 3000);
         setChargement(false);
+        console.log(resultat.success);
+        
         if (resultat.success) {
             navigate("/Dashboard/Etudiants/formations");
         }
     };
 
-    let texteBoutonFormation = "Sélectionner vos formations";
-    if (selectedFormationsCheckbox.length > 0) {
-        texteBoutonFormation = selectedFormationsCheckbox.length + " formation(s) sélectionnée(s)";
+    // Modification du texte par défaut si aucune formation n'est sélectionnée
+    let texteBoutonFormation = "Aucune formation";
+    if (selectedFormationSelect) {
+        texteBoutonFormation = "Formation sélectionnée";
     }
 
     let modalDisplayClass = "fixed inset-0 bg-black/50 z-50 justify-center items-center p-4 ";
@@ -116,20 +119,20 @@ export const Register = () => {
             <div className={modalDisplayClass}>
                 <div className="bg-white p-6 rounded-2xl w-full max-w-md shadow-2xl relative text-left">
                     <div className="flex justify-between items-center border-b pb-3 mb-4">
-                        <h3 className="font-extrabold text-lg text-blue-900">Choisir vos formations</h3>
-                        <button onClick={() => setShowFormationModal(false)} className="text-gray-400 hover:text-red-600 font-bold text-xl">✕</button>
+                        <h3 className="font-extrabold text-lg text-blue-900">Choisir votre formation</h3>
+                        <button onClick={() => setShowFormationModal(false)} className="cursor-pointer text-gray-400 hover:text-red-600 font-bold text-xl">✕</button>
                     </div>
                     <div className="my-3">
-                        <label className="text-xs font-bold text-blue-900 block mb-1">Choix rapide :</label>
+                        <label className="text-xs font-bold text-blue-900 block mb-1">Formation :</label>
                         <select value={selectedFormationSelect} onChange={(e) => setSelectedFormationSelect(e.target.value)} className="border w-full p-2 rounded-lg text-sm">
-                            <option value="">-- Choisir une formation unique --</option>
+                            <option value="" disabled>Choisir une formation</option>
                             {formations.map((item, i) => {
-                                let optionValue = item.id;
-                                let optionLabel = item.titre;
+                                let optionValue = item.ID;
+                                let optionLabel = item.Titre;
                                 if (!optionLabel) {
-                                    optionLabel = item.nom;
+                                    optionLabel = item.NOM;
                                 }
-                                let optionKey = item.id;
+                                let optionKey = item.ID;
                                 if (!optionKey) {
                                     optionKey = i;
                                 }
@@ -137,28 +140,7 @@ export const Register = () => {
                             })}
                         </select>
                     </div>
-                    <div className="my-3">
-                        <label className="text-xs font-bold text-blue-900 block mb-1">Choix multiples :</label>
-                        <div className="border rounded-lg p-2 max-h-40 overflow-y-auto bg-gray-50">
-                            {formations.map((item, i) => {
-                                let itemKey = item.id;
-                                if (!itemKey) {
-                                    itemKey = i;
-                                }
-                                let itemLabel = item.titre;
-                                if (!itemLabel) {
-                                    itemLabel = item.nom;
-                                }
-                                return (
-                                    <div key={itemKey} className="flex items-center gap-2 my-1">
-                                        <input type="checkbox" checked={selectedFormationsCheckbox.includes(item.id)} onChange={() => handleCheckboxChange(item.id)} className="accent-green-600" />
-                                        <label className="text-[0.85rem]">{itemLabel}</label>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-                    <button onClick={() => setShowFormationModal(false)} className="w-full mt-4 bg-green-600 text-white font-bold p-2 rounded-lg">Valider</button>
+                    <button onClick={() => setShowFormationModal(false)} className="w-full mt-4 bg-green-600 text-white font-bold p-2 rounded-lg duration-200 hover:bg-green-800 cursor-pointer">Valider</button>
                 </div>
             </div>
 
@@ -187,7 +169,7 @@ export const Register = () => {
                         <input type="text" onChange={(e) => setCin(e.target.value)} placeholder='CIN' className='border w-full md:w-[58%] p-1 m-1 rounded-lg'/>
                         <input type="email" onChange={(e) => setEmail(e.target.value)} placeholder='Email' className='border w-full md:w-[58%] p-1 m-1 rounded-lg'/>
                         
-                        <button type="button" onClick={() => setShowFormationModal(true)} className='border-2 bg-green-600 text-white font-bold w-full md:w-[58%] p-1 m-1 rounded-lg'>
+                        <button type="button" onClick={() => setShowFormationModal(true)} className='border-2 bg-green-600 text-white font-bold w-full md:w-[58%] p-1 m-1 rounded-lg duration-200 hover:bg-green-800 cursor-pointer '>
                             {texteBoutonFormation}
                         </button>
 

@@ -26,7 +26,12 @@ export const Formations_etu = () => {
         const token = localStorage.getItem('token');
         try {
             const res = await getFormations(token);
-            setFormations(res || []);
+            if (res) {
+                setFormations(res);
+            }
+            else {
+                setFormations([]);
+            }
         } catch (error) {
             afficherNotification("Erreur lors du chargement des formations", false);
         }
@@ -63,22 +68,19 @@ export const Formations_etu = () => {
     } else {
         listeFormations = formations.map((item, index) => (
             <div 
-                key={item.id || index} 
+                key={item.ID || index} 
                 className='p-3 rounded-md border-b border-gray-100 hover:bg-slate-50 grid grid-cols-7 items-center text-sm transition-colors'
             >
-                {/* Titre : prend 7 colonnes sur écran < lg, et 4 colonnes sur écran >= lg */}
                 <div className='col-span-7 lg:col-span-4 font-bold text-slate-900 truncate pr-2'>
-                    {item.titre}
+                    {item.Titre}
                 </div>
 
-                {/* Catégorie : masquée sur < lg, prend 2 colonnes sur >= lg */}
                 <div className='hidden lg:block lg:col-span-2 text-xs text-slate-700 truncate pr-2'>
-                    {item.categorie}
+                    {item.Categorie}
                 </div>
 
-                {/* Date d'ajout : masquée sur < lg, prend 1 colonne sur >= lg */}
                 <div className='hidden lg:block lg:col-span-1 text-gray-500 truncate'>
-                    {item.date_creation || item.duree || 'N/A'}
+                    {item.Date_creation}
                 </div>
             </div>
         ));

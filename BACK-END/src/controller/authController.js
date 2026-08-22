@@ -16,8 +16,8 @@ exports.login = async(req,res) => {
 
 exports.register = async(req,res)  => {
     try {
-        const {nom,prenom,cin,email,password,role_id} = req.body;
-        const result = await service.register(nom,prenom,cin,email,password,role_id);
+        const {nom,prenom,cin,email,password,role_id,formation_id,Date_creation} = req.body;
+        const result = await service.register(nom,prenom,cin,email,password,role_id,formation_id,Date_creation);
         return res.status(201).json(result); //message status
     }catch(err) {
         // precision de l'erreur

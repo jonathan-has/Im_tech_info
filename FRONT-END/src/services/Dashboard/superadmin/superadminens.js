@@ -41,7 +41,6 @@ export const getEnseignants = async (token) => {
         }
 
         const data = await reponse.json();
-        console.log(data);
         
         return data;
     } catch (err) {

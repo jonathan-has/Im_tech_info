@@ -111,6 +111,47 @@ const deleteenseignanttable = (Enseignant_id) => {
     })
 }
 
+// ETUDIANTS
+const readetudiant = () => {
+    return new Promise((resolve,reject) =>{
+        const req_sql = 'SELECT e.Etudiant_id, e.Formation_id,e.Date_creation,u.NOM,u.ID,formations.ID,formations.Titre,u.email,u.Prenom FROM etudiants e INNER JOIN user u ON e.Etudiant_id = u.ID INNER JOIN formations ON e.Formation_id = formations.ID';
+        connection.query(req_sql,(err,result) => {
+            if (err) {
+                return reject(err);
+            }
+            return resolve(result);
+        })
+    })
+}
+
+
+
+// suppression dans user
+const deleteetudiant =(id) => {
+    return new Promise((resolve,reject) => {
+        const req_sql = 'DELETE FROM user WHERE id=?';
+        connection.query(req_sql,[id],(err,result) => {
+            if (err) {
+                return reject(err);
+            }
+            return resolve(result);
+        })
+    })
+}
+
+const deleteetudianttable = (id) => {
+    return new Promise((resolve,reject) => {
+        const req_sql = 'DELETE FROM etudiants WHERE Etudiant_id=?';
+        connection.query(req_sql,[id], (err,result) => {
+            if (err) {
+                return reject(err);
+            }
+            return resolve(result);
+        })
+    })
+}
+
+// ETUDIANTS
 module.exports = {
     // formations
     insertFormation,
@@ -123,5 +164,10 @@ module.exports = {
     insertenseignanttable,
     readens,
     deleteens,
-    deleteenseignanttable
+    deleteenseignanttable,
+
+    // etudiants
+    readetudiant,
+    deleteetudiant,
+    deleteetudianttable
 }

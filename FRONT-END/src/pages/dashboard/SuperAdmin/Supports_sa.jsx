@@ -29,30 +29,44 @@ export const Supports_sa = () => {
 
     if (userData) {
         const user = JSON.parse(userData);
-        if (user && user.role) {
-            user_role = user.role;
+        if (user) {
+            if (user.role) {
+                user_role = user.role;
+            }
         }
-    } else if (roleDirect) {
-        user_role = roleDirect;
+    } else {
+        if (roleDirect) {
+            user_role = roleDirect;
+        }
     }
 
     let role = "";
 
-    if (user_role === "RH" || user_role === "rh") {
+    if (user_role === "RH") {
         role = "RH";
-    } else if (user_role === "Superadmin" || user_role === "superadmin") {
-        role = "Superadmin";
+    } else {
+        if (user_role === "rh") {
+            role = "RH";
+        } else {
+            if (user_role === "Superadmin") {
+                role = "Superadmin";
+            } else {
+                if (user_role === "superadmin") {
+                    role = "Superadmin";
+                }
+            }
+        }
     }
 
     // Gestion de l'affichage du bouton de suppression selon le rôle
-    let style = {};
+    let style = "";
     if (role === "Superadmin") {
         style = 'cursor-pointer hover:text-red-600 active:scale-95 transition-all p-1.5 hidden';
+    } else {
+        if (role === "RH") {
+            style = 'cursor-pointer hover:text-red-600 active:scale-95 transition-all p-1.5';
+        }
     }
-    else if (role === "RH") {
-        style = 'cursor-pointer hover:text-red-600 active:scale-95 transition-all p-1.5';
-    }
-
 
     // Fonction pour afficher une notification
     const afficherNotification = (msg, estSucces) => {
@@ -95,9 +109,17 @@ export const Supports_sa = () => {
         const token = localStorage.getItem('token');
         try {
             const res = await deletSupport(id, token);
-            if (res && res.success) {
+            
+            let suppressionReussie = false;
+            if (res) {
+                if (res.success) {
+                    suppressionReussie = true;
+                }
+            }
+
+            if (suppressionReussie) {
                 const nouvelleListe = support.filter(
-                    (item) => item.id !== id
+                    (item) => item.ID !== id
                 );
                 setSupport(nouvelleListe);
                 afficherNotification(
@@ -111,10 +133,7 @@ export const Supports_sa = () => {
                 );
             }
         } catch (error) {
-            console.error(
-                "Erreur suppression :",
-                error
-            );
+            console.error("Erreur suppression :", error);
             afficherNotification(
                 "Erreur lors de la suppression !",
                 false
@@ -136,17 +155,13 @@ export const Supports_sa = () => {
 
         setLoading(true);
         try {
-            let fileName;
-            if (elementSelectionne.titre) {
-                fileName = elementSelectionne.titre + ".pdf";
-            } else if (elementSelectionne.nom) {
-                fileName = elementSelectionne.nom + ".pdf";
-            } else {
-                fileName = "support.pdf";
+            let fileName = "support.pdf";
+            if (elementSelectionne.Support_name) {
+                fileName = elementSelectionne.Support_name + ".pdf";
             }
 
             await telecharger_fichier(
-                elementSelectionne.fichier,
+                elementSelectionne.file_name,
                 fileName
             );
             afficherNotification(
@@ -163,34 +178,48 @@ export const Supports_sa = () => {
         }
     };
 
-    // Fonctions d'extraction des données
+    // Fonctions d'extraction sans opérateur ternaire
     const getTitreSupport = (item) => {
-        if (!item) return 'Sans titre';
-        if (item.titre) return item.titre;
-        if (item.nom) return item.nom;
+        if (!item) {
+            return 'Sans titre';
+        }
+        if (item.Support_name) {
+            return item.Support_name;
+        }
         return 'Sans titre';
     };
 
     const getNomEnseignant = (item) => {
-        if (!item) return 'Non renseigné';
-        if (item.nom) return item.nom;
-        return 'Florian';
+        if (!item) {
+            return 'Non renseigné';
+        }
+        if (item.Enseignant_id) {
+            return "Enseignant #" + item.Enseignant_id;
+        }
+        return 'Non renseigné';
     };
 
     const getTypeFormation = (item) => {
-        if (!item) return 'Non renseigné';
-        if (item.categorie) return item.categorie;
-        if (item.role) return item.role;
+        if (!item) {
+            return 'Non renseigné';
+        }
+        if (item.Formations_id) {
+            return "Formation #" + item.Formations_id;
+        }
         return 'Non renseigné';
     };
 
     const getDateAjout = (item) => {
-        if (!item) return 'N/A';
-        if (item.date_creation) return item.date_creation;
+        if (!item) {
+            return 'N/A';
+        }
+        if (item.Date_creation) {
+            return item.Date_creation.slice(0, 10);
+        }
         return 'N/A';
     };
 
-    // Icône de notification
+    // Icône de notification (sans opérateur ternaire)
     let icone = null;
     if (success) {
         icone = (
@@ -202,7 +231,7 @@ export const Supports_sa = () => {
         );
     }
 
-    // Classe de notification
+    // Classe de notification (sans opérateur ternaire)
     let visibiliteClasse = '';
     if (visible) {
         visibiliteClasse = 'opacity-100 translate-y-0';
@@ -212,7 +241,7 @@ export const Supports_sa = () => {
 
     const notification_classe = `z-50 transition-all duration-300 fixed top-4 right-4 sm:right-auto sm:left-4 max-w-[90vw] sm:max-w-md flex p-3 gap-3 items-center font-semibold text-sm sm:text-base rounded-xl bg-white text-slate-800 shadow-xl border border-slate-200 ${visibiliteClasse}`;
 
-    // Texte du bouton
+    // Texte du bouton (sans opérateur ternaire)
     let textbouton = '';
     if (loading) {
         textbouton = "Téléchargement...";
@@ -222,54 +251,56 @@ export const Supports_sa = () => {
 
     // Modale de détails
     let contenuModaleVoir = null;
-    if (affichageVoir && elementSelectionne) {
-        contenuModaleVoir = (
-            <div className='fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200'>
-                <div className='relative w-full max-w-lg bg-white text-slate-800 p-5 sm:p-6 rounded-2xl shadow-2xl flex flex-col items-start'>
-                    <button 
-                        onClick={() => setAffichageVoir(false)} 
-                        className='absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors'
-                        aria-label="Fermer"
-                    >
-                        <FaXmark className='text-lg sm:text-xl' />
-                    </button>
+    if (affichageVoir) {
+        if (elementSelectionne) {
+            contenuModaleVoir = (
+                <div className='fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200'>
+                    <div className='relative w-full max-w-lg bg-white text-slate-800 p-5 sm:p-6 rounded-2xl shadow-2xl flex flex-col items-start'>
+                        <button 
+                            onClick={() => setAffichageVoir(false)} 
+                            className='absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors'
+                            aria-label="Fermer"
+                        >
+                            <FaXmark className='text-lg sm:text-xl' />
+                        </button>
 
-                    <h1 className='font-extrabold text-xl sm:text-2xl mb-4 text-purple-700 pr-8'>
-                        Détail du support
-                    </h1>
+                        <h1 className='font-extrabold text-xl sm:text-2xl mb-4 text-purple-700 pr-8'>
+                            Détail du support
+                        </h1>
 
-                    <div className='w-full space-y-3 text-left border-t border-slate-100 pt-4 text-sm sm:text-base'>
-                        <p>
-                            <span className='font-bold text-slate-600'>Nom du support : </span>
-                            {getTitreSupport(elementSelectionne)}
-                        </p>
+                        <div className='w-full space-y-3 text-left border-t border-slate-100 pt-4 text-sm sm:text-base'>
+                            <p>
+                                <span className='font-bold text-slate-600'>Nom du support : </span>
+                                {getTitreSupport(elementSelectionne)}
+                            </p>
 
-                        <p>
-                            <span className='font-bold text-slate-600'>Enseignant : </span>
-                            {getNomEnseignant(elementSelectionne)}
-                        </p>
+                            <p>
+                                <span className='font-bold text-slate-600'>Enseignant : </span>
+                                {getNomEnseignant(elementSelectionne)}
+                            </p>
 
-                        <p>
-                            <span className='font-bold text-slate-600'>Type : </span>
-                            {getTypeFormation(elementSelectionne)}
-                        </p>
+                            <p>
+                                <span className='font-bold text-slate-600'>Formation : </span>
+                                {getTypeFormation(elementSelectionne)}
+                            </p>
 
-                        <p>
-                            <span className='font-bold text-slate-600'>Date d'ajout : </span>
-                            {getDateAjout(elementSelectionne)}
-                        </p>
+                            <p>
+                                <span className='font-bold text-slate-600'>Date de création : </span>
+                                {getDateAjout(elementSelectionne)}
+                            </p>
+                        </div>
+
+                        <button 
+                            onClick={download_file} 
+                            disabled={loading} 
+                            className='w-full mt-6 py-3 px-4 bg-slate-800 cursor-pointer active:scale-95 text-white font-bold rounded-lg hover:bg-slate-900 transition-all disabled:opacity-50 text-sm sm:text-base'
+                        >
+                            {textbouton}
+                        </button>
                     </div>
-
-                    <button 
-                        onClick={download_file} 
-                        disabled={loading} 
-                        className='w-full mt-6 py-3 px-4 bg-slate-800 cursor-pointer active:scale-95 text-white font-bold rounded-lg hover:bg-slate-900 transition-all disabled:opacity-50 text-sm sm:text-base'
-                    >
-                        {textbouton}
-                    </button>
                 </div>
-            </div>
-        );
+            );
+        }
     }
 
     // Affichage de la liste
@@ -281,67 +312,71 @@ export const Supports_sa = () => {
             </div>
         );
     } else {
+        let lignesTableau = [];
+        for (let i = 0; i < support.length; i++) {
+            let item = support[i];
+            let keyId = item.ID;
+            if (!keyId) {
+                keyId = i;
+            }
+
+            lignesTableau.push(
+                <div 
+                    key={keyId} 
+                    className='p-4 hover:bg-slate-50 flex items-center justify-between lg:grid lg:grid-cols-8 gap-2 text-sm transition-colors'
+                >
+                    {/* Titre */}
+                    <div className='lg:col-span-3 font-bold text-slate-900 truncate pr-2'>
+                        {getTitreSupport(item)}
+                    </div>
+
+                    {/* Enseignant */}
+                    <div className='hidden lg:block lg:col-span-2 text-sm font-semibold text-slate-800 truncate'>
+                        {getNomEnseignant(item)}
+                    </div>
+
+                    {/* Formation */}
+                    <div className='hidden lg:block lg:col-span-1 text-sm text-slate-700 truncate'>
+                        {getTypeFormation(item)}
+                    </div>
+
+                    {/* Date */}
+                    <div className='hidden lg:flex lg:col-span-1 items-center text-sm text-gray-500'>
+                        {getDateAjout(item)}
+                    </div>
+
+                    {/* Actions */}
+                    <div className='lg:col-span-1 flex items-center justify-end gap-2 sm:gap-4 text-gray-500 shrink-0'>
+                        <button 
+                            onClick={() => ouvrirVoir(item)} 
+                            className='cursor-pointer hover:text-blue-600 active:scale-95 transition-all p-1.5 rounded-lg hover:bg-blue-50' 
+                            title="Voir"
+                            aria-label="Voir le support"
+                        >
+                            <FaEye className="text-base" />
+                        </button>
+
+                        <button
+                            onClick={() =>
+                                supprimerSupports(
+                                    item.ID,
+                                    getTitreSupport(item)
+                                )
+                            }
+                            className={style}
+                            title="Supprimer"
+                            aria-label="Supprimer le support"
+                        >
+                            <FaTrash className='text-red-600 text-base' />
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
         listeSupports = (
             <div className="bg-white rounded-b-md border border-t-0 border-gray-100 divide-y divide-slate-100">
-                {support.map((item, index) => {
-                    let keyId = item.id;
-                    if (!keyId) {
-                        keyId = index;
-                    }
-
-                    return (
-                        <div 
-                            key={keyId} 
-                            className='p-4 hover:bg-slate-50 flex items-center justify-between lg:grid lg:grid-cols-8 gap-2 text-sm transition-colors'
-                        >
-                            {/* Titre (Toujours visible) */}
-                            <div className='lg:col-span-3 font-bold text-slate-900 truncate pr-2'>
-                                {getTitreSupport(item)}
-                            </div>
-
-                            {/* Enseignant (Caché sur Mobile & Tablette, visible sur Laptop/Desktop lg:) */}
-                            <div className='hidden lg:block lg:col-span-2 text-sm font-semibold text-slate-800 truncate'>
-                                {getNomEnseignant(item)}
-                            </div>
-
-                            {/* Catégorie / Type (Caché sur Mobile & Tablette, visible sur lg:) */}
-                            <div className='hidden lg:block lg:col-span-1 text-sm text-slate-700 truncate'>
-                                {getTypeFormation(item)}
-                            </div>
-
-                            {/* Date (Cachée sur Mobile & Tablette, visible sur lg:) */}
-                            <div className='hidden lg:flex lg:col-span-1 items-center text-sm text-gray-500'>
-                                {getDateAjout(item)}
-                            </div>
-
-                            {/* Actions (Toujours visible) */}
-                            <div className='lg:col-span-1 flex items-center justify-end gap-2 sm:gap-4 text-gray-500 shrink-0'>
-                                <button 
-                                    onClick={() => ouvrirVoir(item)} 
-                                    className='cursor-pointer hover:text-blue-600 active:scale-95 transition-all p-1.5 rounded-lg hover:bg-blue-50' 
-                                    title="Voir"
-                                    aria-label="Voir le support"
-                                >
-                                    <FaEye className="text-base" />
-                                </button>
-
-                                <button
-                                    onClick={() =>
-                                        supprimerSupports(
-                                            item.id,
-                                            getTitreSupport(item)
-                                        )
-                                    }
-                                    className={style}
-                                    title="Supprimer"
-                                    aria-label="Supprimer le support"
-                                >
-                                    <FaTrash className='text-red-600 text-base' />
-                                </button>
-                            </div>
-                        </div>
-                    );
-                })}
+                {lignesTableau}
             </div>
         );
     }
@@ -361,23 +396,21 @@ export const Supports_sa = () => {
             {/* EN-TÊTE */}
             <div className='w-full flex items-center justify-between mb-4'>
                 <h1 className='font-extrabold text-lg sm:text-xl md:text-2xl text-slate-900'>
-                     Supports
+                    Supports
                 </h1>
             </div>
 
             {/* EN-TÊTE DU TABLEAU */}
-            {/* Version Mobile & Tablette (< lg) */}
             <div className='flex lg:hidden bg-gray-200 p-3 rounded-t-md items-center justify-between font-bold text-slate-700 text-sm'>
                 <div>Noms du support</div>
                 <div>Actions</div>
             </div>
 
-            {/* Version Ordinateur (>= lg) */}
             <div className='hidden lg:grid bg-gray-200 p-3 rounded-t-md grid-cols-8 font-bold text-slate-700 text-sm'>
                 <div className='col-span-3'>Noms du support</div>
                 <div className='col-span-2'>Enseignant</div>
-                <div className='col-span-1'>Types de formations</div>
-                <div className='col-span-1'>Date d'ajout</div>
+                <div className='col-span-1'>Formations</div>
+                <div className='col-span-1'>Date de création</div>
                 <div className='col-span-1 text-right pr-2'>Actions</div>
             </div>
 

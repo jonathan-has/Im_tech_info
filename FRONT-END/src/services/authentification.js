@@ -42,12 +42,12 @@ export const login = async (email, password) =>{
 
 
 // Register
-export const Registre = async(nom,prenom,cin,email,password) => {
+export const Registre = async(nom,prenom,cin,email,password,formation_id,Date_creation) => {
     try {
         const reponse = await fetch(`${API_URL}/auth/Register`,{
             method:'POST',
             headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({nom,prenom,cin,email,password}) //transformer les donnees js en jso
+            body:JSON.stringify({nom,prenom,cin,email,password,formation_id,Date_creation}) //transformer les donnees js en jso
         });
         const data = await reponse.json(); //retransforme les donnees en objet js comme parse
         if (reponse.ok) {

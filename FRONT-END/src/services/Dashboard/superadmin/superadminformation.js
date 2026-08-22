@@ -31,7 +31,7 @@ export const getFormations = async (token) => {
     }
 
     const data = await reponse.json();
-return data;
+    return data;
 };
 
 export const deleteFormations = async(id,token) => {
